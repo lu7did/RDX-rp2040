@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
+<head>
+    <meta name="robots" content="index" />
+    <meta name="robots" content="follow" />
+    <meta name="language" content="English" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="index 20221114" />
+    <meta name="Author" content="Hans-J. Barthen (DL5DI), Kim Huebel (DG9VH) and Andy Taylor (MW0MWZ)" />
+    <meta name="Description" content="Pi-Star Dashboard" />
+    <meta name="KeyWords" content="MW0MWZ,MMDVMHost,ircDDBGateway,D-Star,ircDDB,Pi-Star,Blackwood,Wales,DL5DI,DG9VH" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="css/nice-select.min.css?ver=4.1.5" />
+    <title>LU7DZ - Digital Voice Dashboard</title>
+    <link rel="stylesheet" type="text/css" media="screen and (min-width: 830px)" href="css/pistar-css.php?version=0.95" />
+    <link rel="stylesheet" type="text/css" media="screen and (max-width: 829px)" href="css/pistar-css-mini.php?version=0.95" />
+    <script type="text/javascript" src="/jquery.min.js"></script>
+    <script type="text/javascript" src="/functions.js"></script>
+    <script type="text/javascript">
+      $.ajaxSetup({ cache: false });
+    </script>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div style="font-size: 8px; text-align: left; padding-left: 8px; float: left;">Hostname: pi-star</div><div style="font-size: 8px; text-align: right; padding-right: 8px;">Pi-Star:4.1.5 / Dashboard: 20221114</div>
+<h1>Pi-Star Digital Voice Dashboard for LU7DZ</h1>
+<p style="padding-right: 5px; text-align: right; color: #ffffff;">
+ <a href="/" style="color: #ffffff;">Dashboard</a> |
+ <a href="/admin/" style="color: #ffffff;">Admin</a> |
+ <a href="/admin/configure.php" style="color: #ffffff;">Configuration</a>
+</p>
+</div>
+
+<div class="nav">
+<script type="text/javascript">
+function reloadRepeaterInfo(){
+  $("#repeaterInfo").load("/mmdvmhost/repeaterinfo.php",function(){ setTimeout(reloadRepeaterInfo,1000) });
+}
+setTimeout(reloadRepeaterInfo,1000);
+$(window).trigger('resize');
+</script>
+<div id="repeaterInfo">
+
+<table>
+  <tr><th colspan="2">Modes Enabled</th></tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">D-Star</td>
+<td style="background:#0b0; color:#030; width:50%;">DMR</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">P25</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF XMode</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">NXDN</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">DMR XMode</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">POCSAG</td>
+</tr>
+</table>
+<br />
+
+<table>
+  <tr><th colspan="2">Network Status</th></tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">D-Star Net</td>
+<td style="background:#0b0; color:#030; width:50%;">DMR Net</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF Net</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">P25 Net</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF2DMR</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">NXDN Net</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF2NXDN</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">YSF2P25</td>
+</tr>
+  <tr><td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">DMR2NXDN</td>
+<td style="background:#606060; color:#b0b0b0;" aria-disabled="true>">DMR2YSF</td>
+</tr>
+</table>
+<br />
+
+<table>
+<tr><th colspan="2">Radio Info</th></tr>
+<tr><th>Trx</th><td style="background:#0b0; color:#030;">Listening</td></tr>
+<tr><th>Tx</th><td style="background: #ffffff;">431.075000 MHz</td></tr>
+<tr><th>Rx</th><td style="background: #ffffff;">431.075000 MHz</td></tr>
+<tr><th>FW</th><td style="background: #ffffff;">HS_Hat:v1.4.17</td></tr>
+<tr><th>TCXO</th><td style="background: #ffffff;">14.7456 MHz</td></tr>
+</table>
+
+<br />
+<table>
+<tr><th colspan="2">DMR Repeater</th></tr>
+<tr><th>DMR ID</th><td style="background: #ffffff;">7220292</td></tr>
+<tr><th>DMR CC</th><td style="background: #ffffff;">1</td></tr>
+<tr><th>TS1</th><td style="background:#606060; color:#b0b0b0;">disabled</td></tr>
+<tr><th>TS2</th><td style="background:#0b0;">enabled</td></tr>
+<tr><th colspan="2">DMR Master</th></tr>
+<tr><td  style="background: #ffffff;" colspan="2">BM 2222 Italy</td></tr>
+</table>
+</div>
+</div>
+<div class="content">
+<script type="text/javascript">
+function reloadLocalTx(){
+  $("#localTxs").load("/mmdvmhost/localtx.php",function(){ setTimeout(reloadLocalTx,1500) });
+}
+setTimeout(reloadLocalTx,1500);
+function reloadLastHerd(){
+  $("#lastHerd").load("/mmdvmhost/lh.php",function(){ setTimeout(reloadLastHerd,1500) });
+}
+setTimeout(reloadLastHerd,1500);
+$(window).trigger('resize');
+</script>
+<div id="lastHerd">
+<b>Gateway Activity</b>
+  <table>
+    <tr>
+      <th><a class="tooltip" href="#">Time (-03)<span><b>Time in -03 time zone</b></span></a></th>
+      <th><a class="tooltip" href="#">Mode<span><b>Transmitted Mode</b></span></a></th>
+      <th style="min-width:14ch"><a class="tooltip" href="#">Callsign<span><b>Callsign</b></span></a></th>
+      <th><a class="tooltip" href="#">Target<span><b>Target, D-Star Reflector, DMR Talk Group etc</b></span></a></th>
+      <th><a class="tooltip" href="#">Src<span><b>Received from source</b></span></a></th>
+      <th><a class="tooltip" href="#">Dur(s)<span><b>Duration in Seconds</b></span></a></th>
+      <th><a class="tooltip" href="#">Loss<span><b>Packet Loss</b></span></a></th>
+      <th><a class="tooltip" href="#">BER<span><b>Bit Error Rate</b></span></a></th>
+    </tr>
+<tr><td align="left">06:23:52 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU2FM" target="_blank">LU2FM</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU2FM*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>0.5</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">06:23:12 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU3LJ" target="_blank">LU3LJ</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU3LJ*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>10.2</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">06:07:17 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU4DQ" target="_blank">LU4DQ</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU4DQ*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>0.9</td><td style="background:#f33;">80%</td><td>0.0%</td></tr>
+<tr><td align="left">05:12:48 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU4AE" target="_blank">LU4AE</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU4AE*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>29.6</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">04:09:39 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU4AA" target="_blank">LU4AA</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU4AA*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>4.4</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">01:35:53 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU8EMD" target="_blank">LU8EMD</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU8EMD*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>5.2</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">01:13:39 Dec 27th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU5AM" target="_blank">LU5AM</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU5AM*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>4.8</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">23:16:45 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU1KJL" target="_blank">LU1KJL</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU1KJL*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>14.2</td><td style="background:#f33;">6%</td><td>0.0%</td></tr>
+<tr><td align="left">22:43:44 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU8EB" target="_blank">LU8EB</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU8EB*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>4.8</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">22:09:44 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LU8DBU" target="_blank">LU8DBU</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LU8DBU*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>5.2</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">21:47:06 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=CE1KHJ" target="_blank">CE1KHJ</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=CE1KHJ*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>5.2</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">21:33:43 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=CA4RAB" target="_blank">CA4RAB</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=CA4RAB*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>1.2</td><td>0%</td><td>0.0%</td></tr>
+<tr><td align="left">21:15:33 Dec 26th</td><td align="left">DMR TS2</td><td align="left"><div style="float:left;"><a href="https://database.radioid.net/database/view?callsign=LW1EAM" target="_blank">LW1EAM</a></div> <div style="text-align:right;">&#40;<a href="https://aprs.fi/#!call=LW1EAM*" target="_blank">GPS</a>&#41;</div></td><td align="left">TG&nbsp;7229</td><td>Net</td><td>6.9</td><td style="background:#f33;">24%</td><td>0.0%</td></tr>
+  </table>
+</div>
+<br />
+<div id="localTxs">
+<b>Local RF Activity</b>
+  <table>
+    <tr>
+      <th><a class="tooltip" href="#">Time (-03)<span><b>Time in -03 time zone</b></span></a></th>
+      <th><a class="tooltip" href="#">Mode<span><b>Transmitted Mode</b></span></a></th>
+      <th style="min-width:14ch"><a class="tooltip" href="#">Callsign<span><b>Callsign</b></span></a></th>
+      <th><a class="tooltip" href="#">Target<span><b>Target, D-Star Reflector, DMR Talk Group etc</b></span></a></th>
+      <th><a class="tooltip" href="#">Src<span><b>Received from source</b></span></a></th>
+      <th><a class="tooltip" href="#">Dur(s)<span><b>Duration in Seconds</b></span></a></th>
+      <th style="min-width:5ch"><a class="tooltip" href="#">BER<span><b>Bit Error Rate</b></span></a></th>
+      <th style="min-width:8ch"><a class="tooltip" href="#">RSSI<span><b>Received Signal Strength Indication</b></span></a></th>
+    </tr>
+  </table>
+</div>
+</div>
+
+<div class="footer">
+Pi-Star / Pi-Star Dashboard, &copy; Andy Taylor (MW0MWZ) 2014-2022.<br />
+ircDDBGateway Dashboard by Hans-J. Barthen (DL5DI),<br />
+MMDVMDash developed by Kim Huebel (DG9VH), <br />
+Need help? Click <a style="color: #ffffff;" href="https://www.facebook.com/groups/pistarusergroup/" target="_new">here for the Facebook Group</a><br />
+or Click <a style="color: #ffffff;" href="https://forum.pistar.uk/" target="_new">here to join the Support Forum</a><br />	
+Get your copy of Pi-Star from <a style="color: #ffffff;" href="http://www.pistar.uk/downloads/" target="_new">here</a>.<br />
+</div>
+
+</div>
+</body>
+<script type="text/javascript" src="/nice-select.min.js"></script>
+<script type="text/javascript">
+    var selectize = document.querySelectorAll('select')
+    var options = {searchable: true};
+    selectize.forEach(function(select){
+        if( select.length > 30 && null === select.onchange ) {
+            select.classList.add("small", "selectize");
+            tabletd = select.closest('td');
+            tabletd.style.cssText = 'overflow-x:unset';
+            NiceSelect.bind(select, options);
+        }
+    });
+</script>
+</html>
