@@ -94,7 +94,7 @@ Check for installation and configuration instructions at this [link](https://www
 
 The following configuration applies for the Arduino IDE when using a Raspberry Pi Pico Wireless
 
-![Alt Text](../../docs/arduino_ide.png "Arduino IDE board configuration")
+![Alt Text](./docs/arduino_ide.png "Arduino IDE board configuration")
 
 
 For the standard Raspberry Pi Pico (non Wireless) use the same parameters but selecting the Raspberry Pico board instead.
@@ -132,7 +132,7 @@ Code excerpts gathered from manyfold sources to recognize here, large pieces of 
 
 The following UML graphic shows at high level the FT8 decoding cycle
 
-![Alt Text](../../docs/RDX-rp2040-FT8.png "FT8 decoding cycle")
+![Alt Text](./docs/RDX-rp2040-FT8.png "FT8 decoding cycle")
 
 
 ### FT8 protocol finite state machine
@@ -140,7 +140,7 @@ The following UML graphic shows at high level the FT8 decoding cycle
 The following UML graphic shows at high level the FT8 finite state machine controlling the behaviour of the 
 transceiver during the FT8 QSO cycle.
 
-![Alt Text](../../docs/RDX-rp2040-FSM.png "FT8 protocol finite state machine")
+![Alt Text](./docs/RDX-rp2040-FSM.png "FT8 protocol finite state machine")
 
 ## Multicore operation
 
@@ -148,7 +148,7 @@ In order to increase the performance of the transceiver the different sub-system
 cores provided by the rp2040 architecture (available on build 70 and up).
 The sub-system high level logic can be seen in the following UML diagram:
 
-![Alt Text](../../docs/RDX-multicore.png "rp2040 Multicore high level logic")
+![Alt Text](./docs/RDX-multicore.png "rp2040 Multicore high level logic")
 
 Even if enabled by default being an experimental feature it can be switched off returning to the previous, single core,
 operationg by commenting out the configuration line **#define MULTICORE 1**.
@@ -156,7 +156,7 @@ operationg by commenting out the configuration line **#define MULTICORE 1**.
 ## Configuration Web server
 
 Configuration parameters can also be changed using this facility, once activated it can be accessed using **http://rdx.local:8000"** or **"http://{ip_address}:8000.
-![Alt Text](../../docs/rdx_web.png "Web based configuration server")
+![Alt Text](./docs/rdx_web.png "Web based configuration server")
 Parameters can be modified and the update is made by pressing the button **update**, however the changes won't be made permanent until the **save** button is 
 pressed and the changes made effective by writting them in EEPROM.
 A facility to activate the transmitter can be used by pressing the **Tx+** button while pressing **Tx-** will turn the transmitter off.
@@ -389,7 +389,7 @@ http://rdx.local/edit
 ```
 When accessed the GUI shown in the Web browser is as indicated by the following picture
 
-![Alt Text](../../docs/rdx_fsb.png "File System Browser")
+![Alt Text](./docs/rdx_fsb.png "File System Browser")
 Files can be edited, deleted, downloaded or moved using this facility.
 
 Using this facility the files, can be more than one, could be edited, deleted or downloaded.
@@ -422,14 +422,14 @@ This facility is based on a feature of the Arduino pico core called **SingleFile
 When activated thru the GUI a File Explorer window will be opened showing the PICODISK drive (drive letter will be assigned depending on the current drive configuration of the
 machine); this USB drive will contain a single file named **rdx_toolbook.txt** containing the ADIF logbook. This file can be copied, moved, edited or erased like any file.
 
-![Alt Text](../../docs/RDX-USB.png "USB ADIF Logbook")
+![Alt Text](./docs/RDX-USB.png "USB ADIF Logbook")
 
 
 ## GUI
 
 The disposition of the LCD is just to make the hardware development more amenable, but it should be placed on top of the transceiver in some form of "sandwich" configuration.
 
-![Alt Text](../../docs/RDX-rp2040-GUI.jpg "RDX GUI Prototype")
+![Alt Text](./docs/RDX-rp2040-GUI.jpg "RDX GUI Prototype")
 
 The main areas of the GUI are:
 
@@ -542,7 +542,7 @@ The circuit used is esentially the ADX transceiver with the minimum set of modif
  Arduino Nano (ATMEGA328p processor).
 The following diagram has been originally conceived by Dhiru (VU3CER) and put together by Barb (WB2CBA):
 
-![Alt Text](../../docs/PDX_V1.0_Schematic.jpg "PDX Schematic")
+![Alt Text](./docs/PDX_V1.0_Schematic.jpg "PDX Schematic")
 PDX_V1.0_Schematic.jpg
 
 Check additionally mods required and TFT support requirements detailed below.
@@ -553,7 +553,7 @@ accomodate the different signaling and voltages used.
 ### rp2040 pinout assignment
 
 Same as the ADX-rp2040 project
-![Alt Text](../../docs/rp2040_pinout.jpg "rp2040 pinout")
+![Alt Text](./docs/rp2040_pinout.jpg "rp2040 pinout")
 
 ### Power supply
 
@@ -594,7 +594,7 @@ The following modifications applies to both the schematic of the RDX transceiver
 ```
 A suitable circuit can be seen in the following schematic
 
-![Alt Text](../../docs/RDX-rp2040-AF.png "Audio amplifier")
+![Alt Text](./docs/RDX-rp2040-AF.png "Audio amplifier")
 
 
 ## TFT LCD display support
@@ -606,7 +606,7 @@ an on-going call.
 The actual wiring of the TFT board needs to connect the pinout to the Raspberry Pico (rp2040) processor as indicated in the following
 diagram:
 
-![Alt Text](../../docs/RDX-rp2040-TFT.png "TFT LCD wiring")
+![Alt Text](./docs/RDX-rp2040-TFT.png "TFT LCD wiring")
 
 
 ## ADX2PDX daughter board prototype fixes
