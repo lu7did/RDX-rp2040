@@ -419,7 +419,14 @@ bool timeWait() {
 void fftCallBack() {
  
     tft_updatewaterfall(magint);
-    tft_run();
+    
+    #ifdef IL9488
+    bool pen=true;
+    #else
+    bool pen=false;
+    #endif //IL9488 
+
+    tft_run(pen);
 
 }
 /*---------------------------------------------------------------------------------------------
@@ -428,7 +435,8 @@ void fftCallBack() {
 void endCallBack() {
    tft_endoftime();
    checkButton();
-   tft_run();
+
+   tft_run(true);
 }
 /*----------------------------------------------------------------------------------------------
  * This is the callback handler called while sending FT8 tones
@@ -439,7 +447,7 @@ void endCallBack() {
 void idleCallBack() {
    tft_checktouch();
    checkButton();
-   tft_run();
+   tft_run(true);
 }
 /*--------------------------------------------------------------------------------------------
  * This is a callback handler which is called when the ft8 decoding process has identified
@@ -447,7 +455,7 @@ void idleCallBack() {
  * newly received message is.
  */
 void qsoCallBack(int i) {
-  tft_run();
+  tft_run(true);
 }
 /*---------------------------------------------------------------------------------------------
  * Check size of heap memory to validate for memory leaks
@@ -1316,8 +1324,8 @@ void loop()
      thru the UP/DOWN or TX buttons
   */
   checkButton();
-  tft_checktouch();
-  tft_run();
+  //tft_checktouch();
+  tft_run(true);
 
 
   /*------------------------------------------------

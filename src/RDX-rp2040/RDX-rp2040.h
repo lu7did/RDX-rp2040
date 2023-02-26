@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "70"
+#define BUILD   "71"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -354,7 +354,7 @@ extern void tft_print(char *t);
 extern void tft_process();
 extern void tft_updatewaterfall(int m[]);
 extern void tft_setup();
-extern void tft_run();
+extern void tft_run(bool pen);
 extern void tft_endoftime();
 extern void tft_checktouch();
 extern void tft_resetBar();

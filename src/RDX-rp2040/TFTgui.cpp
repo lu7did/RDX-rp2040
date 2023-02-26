@@ -1996,9 +1996,9 @@ void tft_process() {
 /*---------------------------------------------------------------------------------
    This is the operational handling of the TFT
 */
-void tft_run() {
+void tft_run(bool pen) {
 
-  tft_checktouch();
+  if (pen==true) tft_checktouch();
   foot.update();
   d.check();
 

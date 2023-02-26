@@ -13,11 +13,17 @@
 
 #define RP2040_W             1  //Comment if running on a standard Raspberry Pico (non Wireless)
 
+/*----------------------------------------------------
+  The following features can be activated only with 
+  a Raspberry Pico Wireless board
+ *----------------------------------------------------*/
 #if defined(RP2040_W)
 #define FSBROWSER            1  //Comment out if a File System browser is not needed
 #define CLITOOLS             1  //Terminal
 #define WEBTOOLS             1  //Web parameters
 #endif //RP2040_W
+
+//#define IL9488               1  //Commenting this will assume a non IL9488 LCD and restrict the access to the pen
 
 #define ADIF                 1  //Comment out if an ADIF logging is not needed
 #define DATALOGGERUSB        1  //Enable log export as a single file thru USB when active
