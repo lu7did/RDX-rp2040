@@ -608,6 +608,16 @@ diagram:
 
 ![Alt Text](./docs/RDX-rp2040-TFT.png "TFT LCD wiring")
 
+```
+* Warning *
+Attempts to use TFT LCD display other than the IL9488 shows a performance degradation which conflicts with the ability to properly
+decode FT8 signals. The problem has been traced back into a slow response to the pen position reading, which is performed every
+few hundred millisecs. An special build directive "#define IL9488 1" informs the firmware it's running with the required display,
+but if not informed (i.e. commented out or removed) the reading of the pen is avoided during the FT8 decoding cycle and performed
+only during the few fractions of a second remaining after the decoding of a cycle. In this way the response will be much slower 
+but still allow some manual functionality to be preserved, therefore it's a mitigation of an issue derived from not having the
+specified hardware.
+```
 
 ## ADX2PDX daughter board prototype fixes
 
