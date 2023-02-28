@@ -4,7 +4,7 @@
 // Pedro (Pedro Colla) - LU7DZ - 2022
 //
 // Version 2.0
-//
+// 
 // This is the implementation of a rp2040 firmware for a monoband, self-contained FT8 transceiver based on
 // the ADX hardware architecture, using Karliss Goba's ft8lib and leveraging on several other projects
 // 
@@ -539,14 +539,14 @@ bool ft8bot(message_info *CurrentStation, UserSendSelection *sendChoices, messag
  * Define if a CQ is going to be sent, this can happen because it's in auto mode
  * and just completed a receiving cycle or because it has been forced to call CQ
  */
-  _INFOLIST("%s processing state=%d\n",__func__,ft8_state);
+ // _INFO("processing state=%d\n",ft8_state);
   
   if (ft8_state == 0  && !justSent && (autosend || triggerCQ)  ) {   //State 0 - Just completed a reception exploring if trigger a call (CQ Cycle)
     if (nTx < maxTx && !triggerCQ) {  //if autosend then transmit a CQ every maxTx to avoid overwhelming the channel
       nTx++;
-      _INFOLIST("%s state(%d) Tx(%d) autosend active waiting\n", __func__, ft8_state, nTx);
+      _INFO("state(%d) Tx(%d) autosend active waiting\n",ft8_state, nTx);
     } else {
-      _INFOLIST("%s state(%d) Calling CQ\n", __func__, ft8_state);
+      _INFO("state(%d) Calling CQ\n",ft8_state);
       ft8_state = 1;
       triggerCQ=false;
       sendChoices->call_cq = true;
@@ -569,7 +569,7 @@ bool ft8bot(message_info *CurrentStation, UserSendSelection *sendChoices, messag
  * flag set
  */
   if (ft8_state == 0 && !justSent && triggerCALL) {
-       _INFOLIST("%s activating a response from triggerCALL station(%s) grid(%s) SNR(%d) af(%d)\n",__func__,call_station_callsign,call_grid_square,call_self_rx_snr,call_af_frequency);
+       _INFO("activating a response from triggerCALL station(%s) grid(%s) SNR(%d) af(%d)\n",call_station_callsign,call_grid_square,call_self_rx_snr,call_af_frequency);
        ft8_state=5;                               //Synchro with FSM as if the CQ was answered automatically
        triggerCALL=false;
        sendChoices->send_grid = true;
@@ -1159,6 +1159,10 @@ _INFO("rp2040 W processor support activated\n");
 _INFO("File System Browser activated\n"); 
 #endif
 
+#ifdef IL9488 
+_INFO("Support for TFT IL9488 activated\n"); 
+#endif
+
 #ifdef CLITOOLS  
 _INFO("Command Line Interface (CLI) tools activated\n"); 
 #endif
@@ -1243,7 +1247,7 @@ _INFO("USB ADIF export activated\n");
   */
 
   if ( downKey == LOW && upKey == HIGH && txKey == HIGH ) {
-    _INFOLIST("%s Auto calibration mode started\n", __func__);
+    _INFO("Auto calibration mode started\n");
     tft_autocal();
     AutoCalibration();
   }
@@ -1254,7 +1258,7 @@ _INFO("USB ADIF export activated\n");
 
   if ( downKey == LOW && upKey == HIGH && txKey == LOW ) {
 
-    _INFOLIST("%s Configuration command processor started\n", __func__);
+    _INFO("Configuration command processor started\n");
     digitalWrite(FT8,HIGH);
     digitalWrite(WSPR,HIGH);
     tft_iconState(CATICON,true);
@@ -1302,7 +1306,7 @@ _INFO("USB ADIF export activated\n");
   multicore_launch_core1_with_stack (core1_entry,core1_stack,STACK_SIZE);
 #endif //MULTICORE
   
-  _INFOLIST("%s *** Transceiver ready ***\n", __func__);
+  _INFO("*** Transceiver ready ***\n");
 
 }
 //**************************[ END OF SETUP FUNCTION ]************************
@@ -1324,7 +1328,6 @@ void loop()
      thru the UP/DOWN or TX buttons
   */
   checkButton();
-  //tft_checktouch();
   tft_run(true);
 
 
@@ -1416,7 +1419,7 @@ void timeSync() {
   uint32_t ts = millis();
   now = time(nullptr) - t_ofs;
   gmtime_r(&now, &timeprev);
-  _INFOLIST("%s Initial time=[%02d:%02d:%02d]\n", __func__, timeprev.tm_hour, timeprev.tm_min, timeprev.tm_sec);
+  _INFO("Initial time=[%02d:%02d:%02d]\n",timeprev.tm_hour, timeprev.tm_min, timeprev.tm_sec);
   while (digitalRead(UP) == LOW) {
     delay(Bdly);
     if (millis() - ts > 500) {
@@ -1435,7 +1438,7 @@ void timeSync() {
   digitalWrite(FT8, false);
   now = time(nullptr) - t_ofs;
   gmtime_r(&now, &timeprev);
-  _INFOLIST("%s Manual time sync=[%02d:%02d:%02d]\n", __func__, timeprev.tm_hour, timeprev.tm_min, timeprev.tm_sec);
+  _INFO("Manual time sync=[%02d:%02d:%02d]\n",timeprev.tm_hour, timeprev.tm_min, timeprev.tm_sec);
 
 }
 
@@ -1458,7 +1461,7 @@ void startTX() {
   TX_State = 1;
   tft_set(BUTTON_TX,1);
 
-  _INFOLIST("%s TX+ f=%lu freqx=%lu \n", __func__, freq, freq1);
+  _INFO("TX+ f=%lu freqx=%lu \n",freq, freq1);
 
 }
 /*------------------------------------
@@ -1478,7 +1481,7 @@ void stopTX() {
   si5351.output_enable(SI5351_CLK2, 0);   //TX off
 
   TX_State = 0;
-  _INFOLIST("%s TX-\n", __func__);
+  _INFO("TX-\n");
   tft_set(BUTTON_TX,0);
   
 }
@@ -1507,7 +1510,7 @@ void Band_assign() {
   
 
   if (Band_slot < 1 || Band_slot > 4) {
-     _INFOLIST("%s invalid Band_slot(%d)\n",__func__,Band_slot);
+     _INFO("invalid Band_slot(%d)\n",Band_slot);
      return;
   }
 
@@ -1605,7 +1608,7 @@ while (true) {
   freq=Slot2Freq(Band_slot);
   tft_updateBand();
 
-  _INFOLIST("%s completed Band assignment Band_slot=%d freq=%lu\n", __func__, Band_slot,freq);
+  _INFO("Completed Band assignment Band_slot=%d freq=%lu\n",Band_slot,freq);
 
 
 }
@@ -1622,7 +1625,7 @@ void updateEEPROM() {
       return;
     }
 
-    _INFOLIST("%s EEPROM content being updated\n",__func__);
+    _INFO("EEPROM content being updated\n");
     addr = 50;
     EEPROM.put(addr, Band_slot);
  
@@ -1664,7 +1667,7 @@ void updateEEPROM() {
 #endif //RP2040_W 
     
     EEPROM.commit();
-    _INFOLIST("%s EEPROM commit completed\n",__func__);
+    _INFO("EEPROM commit completed\n");
 
 }
 
@@ -1927,7 +1930,7 @@ void INIT() {
   Wire.setSCL(I2C_SCL);
   Wire.begin();
 
-  _INFOLIST("%s: I/O setup completed\n", __func__);
+  _INFO("I/O setup completed\n");
 
 
   /*------
@@ -1940,11 +1943,11 @@ void INIT() {
     
 
   if (temp != 100 || strcmp(build,(char*)BUILD)!=0) {
-    _INFOLIST("%s New build detected (version %s build %s), EEPROM being reset\n",__func__,VERSION,BUILD);
+    _INFO("New build detected (version %s build %s), EEPROM being reset\n",VERSION,BUILD);
     resetEEPROM();
   } else  {
     //--------------- EEPROM INIT VALUES
-    _INFOLIST("%s EEPROM reading completed\n",__func__);
+    _INFO("EEPROM reading completed\n");
     readEEPROM();
 
   }
@@ -2033,7 +2036,7 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_WEB,web_port);  
 #endif //RP2040_W
     
-    _INFOLIST("%s completed\n",__func__);
+    _INFO(" completed\n");
       
 }
 /*----------------------------------
@@ -2077,7 +2080,7 @@ void resetEEPROM() {
 #endif //RP2040_W 
     
     updateEEPROM();
-    _INFOLIST("%s EEPROM reset completed\n",__func__);
+    _INFO("EEPROM reset completed\n");
     
 }
 //********************************[ END OF INITIALIZATION FUNCTION ]*************************************
