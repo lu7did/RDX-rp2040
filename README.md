@@ -30,17 +30,34 @@ features on this project called **RDX**, standing for **Raspberry Pico Digital T
 *New in release 2.0 *
 
 * Initial alpha release, for experimentation purposes only
+
+build 20
 * Automatic FT8 operation.
+
+build 30
 * TFT LCD 480x320 support.
+
+build 40
 * Autocalibration mode has been added check the appropriate section on how to enable and operate.
 * NTP protocol based time synchronization.
+
+build 50
 * Web browser console (access to File System in Flash memory).
+
+build 52
 * Improvements in the FT8 protocol handling cycle.
 * GUI development.
+
+build 60
 * ADIF logbook generation.
 * USB ADIF logbook export.
 * Serial configuration terminal.
+
+build 70
 * Multicore operation (core0 and core1)
+
+build 72
+* initial support for Si473x chipset
 ```
 
 # Hardware
@@ -50,6 +67,7 @@ Same hardware than the supported by the ADX-rp2040 firmware,  with the following
 
 *	Audio amplifier (see modifications).
 *	TFT LCD IL9488 480x320 board (see wiring). 
+*	Si473x receiver chipset
 
 
 # Firmware
@@ -596,7 +614,16 @@ A suitable circuit can be seen in the following schematic
 
 ![Alt Text](./docs/RDX-rp2040-AF.png "Audio amplifier")
 
+## Si473x Chipset support
 
+An initial support for the Si473x chipset can be included by enabling the initializacion thru the **#include RX_SI4735  1** 
+
+	*	During initialization a search in the I2C bus is made looking for a Si473x chip, if found the SSB patch is loaded and the chip is initialized
+		with the current band parameters.
+	*	On each band change the chip is reset and the new band parameters is loaded.
+
+At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
+ 
 ## TFT LCD display support
 
 The firmware supports a TFT LCD IL9488 480x320 display where a GUI is presented allowing the operation of the transceiver, the LCD is optional

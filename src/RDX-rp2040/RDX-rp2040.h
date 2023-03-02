@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "71"
+#define BUILD   "72"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -65,6 +65,9 @@ typedef int16_t sigBin[960];
   -------------------------------------------------------------*/
 
 #define MULTICORE       1       //Processing is split between core0 and core1
+//#define RX_SI4735       1       //Receiver based on Si473x chipset
+#define IL9488          1       //Commenting this will assume a non IL9488 LCD and restrict the access to the pen
+
 
 
 #define BAUD            115200  //Standard Serial port
@@ -84,27 +87,45 @@ typedef int16_t sigBin[960];
    in order to avoid conflicts
 */
 
+/*----------------------------------------------
+  If defined MULTICORE then exclude FSBROWSER
+  and CLITOOLS and WEBTOOLS
+ *----------------------------------------------*/
 #ifdef MULTICORE
 #undef FSBROWSER
 #undef CLITOOLS
 #undef WEBTOOLS
 #endif //MULTICORE
 
+/*-----------------------------------------------
+  If this is a standard Pico (not W) when exclude
+  facilities that requires WiFi
+ *-----------------------------------------------*/
 #ifndef RP2040_W
 #undef FSBROWSER
 #undef WEBTOOLS
 #endif //RP2040_W
 
+/*-----------------------------------------------
+  If FSBROWSER has been defined also include 
+  CLITOOLS but exclude DATALOGGERUSB and WEBTOOLS
+ *-----------------------------------------------*/
 #ifdef FSBROWSER
 #define CLITOOLS  1
 #undef DATALOGGERUSB
 #undef WEBTOOLS 
 #endif //FSBROWSER
 
+/*-----------------------------------------------
+  If WEBTOOLS is defined exclude CLITOOLS
+ *-----------------------------------------------*/
 #ifdef WEBTOOLS
 #define CLITOOLS 1
 #endif //WEBTOOLS
 
+/*-----------------------------------------------
+  If DATALOGGERUSB is defined then force ADIF log
+ *-----------------------------------------------*/
 #ifdef DATALOGGERUSB
 #define ADIF 1
 #endif //DATALOGGERUSB
@@ -243,8 +264,6 @@ typedef int16_t sigBin[960];
 #define SLOT_3               3
 #define SLOT_4               4
 
-
-
 #define SYNC_OK               0
 #define SYNC_NO_INET          1
 #define SYNC_NO_AP            2
@@ -255,6 +274,17 @@ typedef int16_t sigBin[960];
 #define UDP_PORT           2237        //UDP Port to listen
 #define UDP_BUFFER          256
 
+
+//*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+//*                       Pin definitions (SI4735)                                              *
+//*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+#define SI4735_RESET         16
+#define AM_FUNCTION           1
+#define FM_FUNCTION           0
+#define FT8_BANDWIDTH_IDX     2         //define a 3 KHz bandwidth
+#define FT8_USB               2         //define USB as the mode
+#define FT8_STEP              1         //Step 1KHz (required but not used as there is no tuning)
+#define FT8_VOLUME           45
 
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
 //*                         External References                                              *
@@ -403,7 +433,25 @@ extern void data_setup();
 extern void cli_command();
 extern void cli_prompt(char *_out);
 
+extern uint16_t Band2Idx(uint16_t b);
+extern uint16_t minFreq(uint16_t i);
+extern uint16_t maxFreq(uint16_t i);
+extern uint16_t currFreq(uint16_t i);
+
+
+
 extern struct semaphore spc;      //Semaphore to protect multithread access to the signal queue
+
+#ifdef RX_SI4735
+/*-------------------------------------
+ * Definitions for the Si4735 chipset
+ */
+
+extern void SI4735_setup();
+extern void SI4735_loadSSB(int s);
+extern void SI4735_Status();
+
+#endif //RX_SI4735
 
 #ifdef MULTICORE
 
@@ -415,6 +463,8 @@ extern uint16_t queueR;           //Signal capture queue read pointer
 extern uint16_t queueW;           //Signal capture queue write pointer
 
 extern struct semaphore ipc;      //Semaphore to protect multithread access to the signal queue
+
+
 
 /*-------------------------------------
  * Special structure to protect EEPROM

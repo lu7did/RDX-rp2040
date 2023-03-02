@@ -1159,6 +1159,12 @@ _INFO("rp2040 W processor support activated\n");
 _INFO("File System Browser activated\n"); 
 #endif
 
+#ifdef RX_SI4735
+_INFO("RX Si473x defined\n");
+#else
+_INFO("RX CD2003GP defined\n");
+#endif //RX_SI4735
+
 #ifdef IL9488 
 _INFO("Support for TFT IL9488 activated\n"); 
 #endif
@@ -1306,6 +1312,11 @@ _INFO("USB ADIF export activated\n");
   multicore_launch_core1_with_stack (core1_entry,core1_stack,STACK_SIZE);
 #endif //MULTICORE
   
+#ifdef RX_SI4735
+  SI4735_setup();
+  _INFO("Si4735 receiver initialized");
+#endif //RX_SI4735
+
   _INFO("*** Transceiver ready ***\n");
 
 }
@@ -1335,6 +1346,13 @@ void loop()
      Main FT8 handling cycle
   */
   ft8_run();
+
+  #ifdef RX_SI4735
+  /*------------------------------------------------
+     If Si4735 enabled then show status
+  */
+  SI4735_Status();
+  #endif //RX_SI4735
 
 }
 //*********************[ END OF MAIN LOOP FUNCTION ]*************************
@@ -1497,6 +1515,25 @@ void ManualTX() {
 }
 
 //******************************[ Band  Assign Function ]******************************
+/*----------------------------------------
+ * min Freq
+ *----------------------------------------*/
+uint16_t minFreq(uint16_t i){
+  return (slot[i][1]/1000);
+}
+/*----------------------------------------
+ * max Freq
+ *----------------------------------------*/
+uint16_t maxFreq(uint16_t i){
+  return (slot[i][2]/1000);
+}
+/*----------------------------------------
+ * current Freq
+ *----------------------------------------*/
+uint16_t currFreq(uint16_t i){
+  return (slot[i][0]/1000);
+}
+
 
 void Band_assign() {
 
@@ -1822,16 +1859,8 @@ Calibrate:
 //****************************** [ End Of Calibration Function ]****************************************
 
 //*********************************[ INITIALIZATION FUNCTION ]******************************************
-/*-----------------------------------------------
- * Convert a slot number to the FT8 frequency for
- * that slot
- */
-unsigned long Slot2Freq(int s) {
-  if (s<1 || s>BANDS) {
-      s=1;
-  }
-  uint16_t b=Bands[s-1];
-  uint8_t  i=0;
+uint16_t Band2Idx(uint16_t b) {
+  uint16_t i=0;
   switch (b) {
     case 80 : i=0;break;
     case 60 : i=1;break;
@@ -1843,11 +1872,29 @@ unsigned long Slot2Freq(int s) {
     case 12 : i=7;break;
     case 10 : i=8;break;
   }
+  return i;
+
+}
+/*-----------------------------------------------
+ * Convert a slot number to the FT8 frequency for
+ * that slot
+ */
+unsigned long Slot2Freq(int s) {
+  if (s<1 || s>BANDS) {
+      s=1;
+  }
+  uint16_t b=Bands[s-1];
+  uint8_t  i=Band2Idx(b);
+
   digitalWrite(WSPR, LOW);
   digitalWrite(JS8, LOW);
   digitalWrite(FT4, LOW);
   digitalWrite(FT8, LOW);
   digitalWrite(8-Band_slot,HIGH);
+
+  #ifdef RX_SI4735
+  SI4735_loadSSB(s);
+  #endif //RX_SI4735
 
   return slot[i][0];
 
@@ -1929,6 +1976,14 @@ void INIT() {
   Wire.setSDA(I2C_SDA);
   Wire.setSCL(I2C_SCL);
   Wire.begin();
+
+
+  #ifdef RX_SI4735
+
+  gpio_init(SI4735_RESET);
+  gpio_pull_up(SI4735_RESET);
+
+  #endif //RX_SI4735
 
   _INFO("I/O setup completed\n");
 
