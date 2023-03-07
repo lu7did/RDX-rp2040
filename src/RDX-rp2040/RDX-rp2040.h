@@ -65,9 +65,17 @@ typedef int16_t sigBin[960];
   -------------------------------------------------------------*/
 
 #define MULTICORE       1       //Processing is split between core0 and core1
-//#define RX_SI4735       1       //Receiver based on Si473x chipset
-//#define SI4732          1       //Force the initialization protocol of a SI4732
+
+/*-------------------------------------------------------------*
+   LCD TFT Configuration parameters
+  -------------------------------------------------------------*/
 #define IL9488          1       //Commenting this will assume a non IL9488 LCD and restrict the access to the pen
+
+/*-------------------------------------------------------------*
+   Support for the Si473x chipset as a receiver
+  -------------------------------------------------------------*/
+//#define RX_SI4735       1       //UNCOMMENT to use a receiver based on Si473x chipset
+//#define SI4732          1       //UNCOMMENT to Force the initialization protocol of a the Si4732 instead of Si4735
 
 
 
@@ -595,6 +603,7 @@ bool cli_execute(char *buffer, char *outbuffer);
 
 #else //!DEBUG
 #define _INFOLIST(...)
+#define _INFO(...)
 #define _SERIAL Serial
 #endif
 
