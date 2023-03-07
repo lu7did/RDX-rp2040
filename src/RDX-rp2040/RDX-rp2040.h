@@ -605,6 +605,9 @@ bool cli_execute(char *buffer, char *outbuffer);
 #define _INFOLIST(...)
 #define _INFO(...)
 #define _SERIAL Serial
+#define _println(...)
+#define _print(...)
+
 #endif
 
 /*----------------------------------------------------------
