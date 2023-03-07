@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "72"
+#define BUILD   "73"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -65,7 +65,8 @@ typedef int16_t sigBin[960];
   -------------------------------------------------------------*/
 
 #define MULTICORE       1       //Processing is split between core0 and core1
-//#define RX_SI4735       1       //Receiver based on Si473x chipset
+#define RX_SI4735       1       //Receiver based on Si473x chipset
+#define SI4732          1       //Force the initialization protocol of a SI4732
 #define IL9488          1       //Commenting this will assume a non IL9488 LCD and restrict the access to the pen
 
 

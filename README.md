@@ -623,6 +623,18 @@ An initial support for the Si473x chipset can be included by enabling the initia
 	*	On each band change the chip is reset and the new band parameters is loaded.
 
 At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
+
+```
+Si4732 chipset (experimental)
+
+To take into account the initialization differences between the Si4732 and the Si4735, chips otherwise
+equivalent from the command set standpoint, a compilation directive exclusive for the Si4732 has been
+included.
+
+#define SI4732 	1
+
+If not using a Si4732 chipset this clause must be commented out.
+```
  
 ## TFT LCD display support
 

@@ -98,9 +98,14 @@ return;
 void SI4735_setup()
 {
 
+#ifdef SI4732
+  digitalWrite(SI4735_RESET, LOW);
+  _INFO("AM and FM station tuning test, looking for a Si4732 chip\n");
+#else
   digitalWrite(SI4735_RESET, HIGH);
-  _INFO("AM and FM station tuning test, looking for a Si473x chip\n");
- 
+  _INFO("AM and FM station tuning test, looking for a Si4735 chip\n");
+#endif //SI4732
+
   // Look for the Si47XX I2C bus address
   int16_t si4735Addr = rx.getDeviceI2CAddress(SI4735_RESET);
   if ( si4735Addr == 0 ) {
