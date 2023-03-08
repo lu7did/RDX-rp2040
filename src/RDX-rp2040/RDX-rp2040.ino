@@ -1159,11 +1159,11 @@ _INFO("rp2040 W processor support activated\n");
 _INFO("File System Browser activated\n"); 
 #endif
 
-#ifdef RX_SI4735
+#ifdef RX_SI473X
 _INFO("RX Si473x defined\n");
 #else
 _INFO("RX CD2003GP defined\n");
-#endif //RX_SI4735
+#endif //RX_SI473X
 
 #ifdef IL9488 
 _INFO("Support for TFT IL9488 activated\n"); 
@@ -1312,10 +1312,10 @@ _INFO("USB ADIF export activated\n");
   multicore_launch_core1_with_stack (core1_entry,core1_stack,STACK_SIZE);
 #endif //MULTICORE
   
-#ifdef RX_SI4735
+#ifdef RX_SI473X
   SI4735_setup();
   _INFO("Si4735 receiver initialized");
-#endif //RX_SI4735
+#endif //RX_SI473X
 
   _INFO("*** Transceiver ready ***\n");
 
@@ -1347,12 +1347,12 @@ void loop()
   */
   ft8_run();
 
-  #ifdef RX_SI4735
+  #ifdef RX_SI473X
   /*------------------------------------------------
      If Si4735 enabled then show status
   */
   SI4735_Status();
-  #endif //RX_SI4735
+  #endif //RX_SI473X
 
 }
 //*********************[ END OF MAIN LOOP FUNCTION ]*************************
@@ -1892,9 +1892,9 @@ unsigned long Slot2Freq(int s) {
   digitalWrite(FT8, LOW);
   digitalWrite(8-Band_slot,HIGH);
 
-  #ifdef RX_SI4735
+  #ifdef RX_SI473X
   SI4735_loadSSB(s);
-  #endif //RX_SI4735
+  #endif //RX_SI473X
 
   return slot[i][0];
 
@@ -1978,12 +1978,12 @@ void INIT() {
   Wire.begin();
 
 
-  #ifdef RX_SI4735
+  #ifdef RX_SI473X
 
   gpio_init(SI4735_RESET);
   gpio_pull_up(SI4735_RESET);
 
-  #endif //RX_SI4735
+  #endif //RX_SI473X
 
   _INFO("I/O setup completed\n");
 

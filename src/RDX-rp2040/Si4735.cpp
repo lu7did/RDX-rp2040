@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "RDX-rp2040.h"
-#ifdef RX_SI4735
+#ifdef RX_SI473X
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
  * RDX_Si4735.ino                                                                              *
  * Simple Proof of Concept (PoC) sketch for the RDX transceiver operating with the Si4735 chip *
@@ -40,6 +40,16 @@
  * Adaptation and integration with RDX project by Dr. Pedro E. Colla (LU7DZ) 2022              *
  * This implementation provides a simplified setup to be used for debugging purposes, the      *
  * final firmware resulting from experimentation will be integrated into the RDX transceiver   *
+ * Pinout adapted to the pin allocation of the RDX project blueprint                           *
+ *                                                                                             *
+ * | ---------------| ---------- |                                                             *
+ * | Si4735 pin     |   RDX Pin  |                                                             *
+ * | ---------------| ---------- |                                                             *
+ * | RESET (pin 15) |     GP1    |                                                             *
+ * | SDIO (pin 18)  |     GP16   | (same than Si5351 sharing the I2C bus)                      *
+ * | CLK (pin 17)   |     GP17   | (same than Si5351 sharing the I2C bus)                      *
+ * | ---------------| ---------- |                                                             *
+ 
  *---------------------------------------------------------------------------------------------*
  *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
 #include <SI4735.h>
@@ -51,6 +61,10 @@ const uint16_t size_content = sizeof ssb_patch_content; // see patch_init.h
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 bool led=false;
 bool enabled=false;
+bool disableAgc=false;
+bool avc_en=true;
+uint8_t currentAGCAtt=0;
+
 SI4735 rx;
 
 /*------------------------------------------------------------------------------------------
@@ -62,23 +76,29 @@ void SI4735_loadSSB(int s) {
 
 if (!enabled) return;
 
-rx.setup(SI4735_RESET, 0, 1, SI473X_ANALOG_AUDIO); // Starts FM mode and ANALOG audio mode.
-delay(500);
-
-rx.setup(SI4735_RESET, AM_FUNCTION);
-delay(500);
-
+rx.setI2CFastModeCustom(500000); // Increase the transfer I2C speed
 rx.loadPatch(ssb_patch_content, size_content, FT8_BANDWIDTH_IDX);
-delay(100);
+rx.setI2CFastModeCustom(100000); // Increase the transfer I2C speed
+rx.setI2CFastMode();
+delay(10);
 
 rx.setTuneFrequencyAntennaCapacitor(1);
-delay(100);
+delay(10);
 
 uint16_t b=Bands[s-1];
 uint16_t i=Band2Idx(b);
  
 rx.setSSB(minFreq(i),maxFreq(i),currFreq(i),FT8_STEP, FT8_USB);
-delay(100);
+delay(10);
+
+rx.setFrequencyStep(FT8_STEP);
+rx.setSSBAudioBandwidth(FT8_USB);
+rx.setSSBSidebandCutoffFilter(1);
+rx.setSSBBfo(0);     //try 975
+rx.setAutomaticGainControl(disableAgc, currentAGCAtt);
+rx.setSSBAutomaticVolumeControl(avc_en);
+rx.setAvcAmMaxGain(65);    // Sets the maximum gain for automatic volume control on AM/SSB mode (from 12 to 90dB)
+rx.setVolume(45);    //MV
 
 rx.setSSBAutomaticVolumeControl(1);
 delay(100);
@@ -98,13 +118,8 @@ return;
 void SI4735_setup()
 {
 
-#ifdef SI4732
-  digitalWrite(SI4735_RESET, LOW);
-  _INFO("AM and FM station tuning test, looking for a Si4732 chip\n");
-#else
   digitalWrite(SI4735_RESET, HIGH);
-  _INFO("AM and FM station tuning test, looking for a Si4735 chip\n");
-#endif //SI4732
+  _INFO("AM and FM station tuning test, looking for a Si473x chip\n");
 
   // Look for the Si47XX I2C bus address
   int16_t si4735Addr = rx.getDeviceI2CAddress(SI4735_RESET);
@@ -121,13 +136,14 @@ void SI4735_setup()
   _INFO("Si473x I2C address is %04x\n",si4735Addr);
   delay(500);
 
+  rx.setup(SI4735_RESET, AM_FUNCTION);
+  delay(10);
+  enabled=true;
+
   SI4735_loadSSB(Band_slot);
   _INFO("Si473x SSB mode enabled\n");
 
-  rx.setVolume(FT8_VOLUME);
-  _INFO("Si473x default volume %d\n",rx.getVolume());
 
-  enabled=true;
 }
 /*-----------------------------------------
  * Show the current receiver status
@@ -140,4 +156,4 @@ void SI4735_Status() {
   _INFO("f=%d MHz SNR: %8.2f dB Signal: %8.2f dBuV\n",currentFrequency / 100.0,rx.getCurrentSNR(),rx.getCurrentRSSI());
 
 }
-#endif //RX_SI4735
+#endif //RX_SI473X

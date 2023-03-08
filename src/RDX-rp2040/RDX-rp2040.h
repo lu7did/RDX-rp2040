@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "73"
+#define BUILD   "74"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -74,10 +74,7 @@ typedef int16_t sigBin[960];
 /*-------------------------------------------------------------*
    Support for the Si473x chipset as a receiver
   -------------------------------------------------------------*/
-//#define RX_SI4735       1       //UNCOMMENT to use a receiver based on Si473x chipset
-//#define SI4732          1       //UNCOMMENT to Force the initialization protocol of a the Si4732 instead of Si4735
-
-
+//#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
 
 #define BAUD            115200  //Standard Serial port
 #define CPU_CLOCK       250000  //CPU Clock (KHz)
@@ -138,6 +135,9 @@ typedef int16_t sigBin[960];
 #ifdef DATALOGGERUSB
 #define ADIF 1
 #endif //DATALOGGERUSB
+
+//#define SI4735_RESET   16
+#define SI4735_RESET    1  //Si473x RESET pin
 
 /*----
    Output control lines
@@ -287,7 +287,6 @@ typedef int16_t sigBin[960];
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 //*                       Pin definitions (SI4735)                                              *
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-#define SI4735_RESET         16
 #define AM_FUNCTION           1
 #define FM_FUNCTION           0
 #define FT8_BANDWIDTH_IDX     2         //define a 3 KHz bandwidth
@@ -451,7 +450,7 @@ extern uint16_t currFreq(uint16_t i);
 
 extern struct semaphore spc;      //Semaphore to protect multithread access to the signal queue
 
-#ifdef RX_SI4735
+#ifdef RX_SI473X
 /*-------------------------------------
  * Definitions for the Si4735 chipset
  */
@@ -460,7 +459,7 @@ extern void SI4735_setup();
 extern void SI4735_loadSSB(int s);
 extern void SI4735_Status();
 
-#endif //RX_SI4735
+#endif //RX_SI473X
 
 #ifdef MULTICORE
 
