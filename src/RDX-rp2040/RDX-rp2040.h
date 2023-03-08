@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "74"
+#define BUILD   "75"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -75,6 +75,10 @@ typedef int16_t sigBin[960];
    Support for the Si473x chipset as a receiver
   -------------------------------------------------------------*/
 //#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
+/*----------------------
+  The following definition is used to force a given I2C address if not found
+  by querying the I2C bus
+*/
 
 #define BAUD            115200  //Standard Serial port
 #define CPU_CLOCK       250000  //CPU Clock (KHz)

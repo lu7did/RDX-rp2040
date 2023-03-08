@@ -261,7 +261,7 @@ const unsigned long slot[MAXBAND][3] = { {3573000UL,3500000UL,3800000UL},       
                                          {21074000UL,21000000UL,21450000UL},      //15m [6]
                                          {24915000UL,24890000UL,24990000UL},      //12m [7]
                                          {28074000UL,28000000UL,29700000UL}};     //10m [8]
-int Band_slot = 1;
+int Band_slot = 3;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
 int Band = 0;
 
 int Band1 = Bands[0]; // Band 1 // These are default bands. Feel free to swap with yours
@@ -1314,10 +1314,10 @@ _INFO("USB ADIF export activated\n");
   
 #ifdef RX_SI473X
   SI4735_setup();
-  _INFO("Si4735 receiver initialized");
+  _INFO("Si4735 receiver initialized\n");
 #endif //RX_SI473X
 
-  _INFO("*** Transceiver ready ***\n");
+_INFO("*** Transceiver ready ***\n");
 
 }
 //**************************[ END OF SETUP FUNCTION ]************************
@@ -1519,19 +1519,25 @@ void ManualTX() {
  * min Freq
  *----------------------------------------*/
 uint16_t minFreq(uint16_t i){
-  return (slot[i][1]/1000);
+  uint16_t mf=slot[i][0]/1000;
+  _INFO("Slot[%d] f=%d KHz\n",i,mf);
+  return mf;
 }
 /*----------------------------------------
  * max Freq
  *----------------------------------------*/
 uint16_t maxFreq(uint16_t i){
-  return (slot[i][2]/1000);
+  uint16_t mf=slot[i][0]/1000;
+  _INFO("Slot[%d] f=%d KHz\n",i,mf);
+  return (mf);
 }
 /*----------------------------------------
  * current Freq
  *----------------------------------------*/
 uint16_t currFreq(uint16_t i){
-  return (slot[i][0]/1000);
+  uint16_t cf=slot[i][0]/1000;
+  _INFO("Slot[%d] f=%d KHz\n",i,cf);
+  return cf;
 }
 
 

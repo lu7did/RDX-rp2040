@@ -81,6 +81,7 @@ rx.loadPatch(ssb_patch_content, size_content, FT8_BANDWIDTH_IDX);
 rx.setI2CFastModeCustom(100000); // Increase the transfer I2C speed
 rx.setI2CFastMode();
 delay(10);
+_INFO("SSB patch loaded\n");
 
 rx.setTuneFrequencyAntennaCapacitor(1);
 delay(10);
@@ -90,6 +91,7 @@ uint16_t i=Band2Idx(b);
  
 rx.setSSB(minFreq(i),maxFreq(i),currFreq(i),FT8_STEP, FT8_USB);
 delay(10);
+_INFO("Frequency set[%d,%d,%d] getFrequency=%d\n",minFreq(i),maxFreq(i),currFreq(i),rx.getFrequency());
 
 rx.setFrequencyStep(FT8_STEP);
 rx.setSSBAudioBandwidth(FT8_USB);
@@ -119,13 +121,13 @@ void SI4735_setup()
 {
 
   digitalWrite(SI4735_RESET, HIGH);
-  _INFO("AM and FM station tuning test, looking for a Si473x chip\n");
+  _INFO("looking for a Si473x chip\n");
 
   // Look for the Si47XX I2C bus address
   int16_t si4735Addr = rx.getDeviceI2CAddress(SI4735_RESET);
   if ( si4735Addr == 0 ) {
     _INFO("Si473x device not found on I2C bus, blocking\n");
-     led=true;
+    led=true;
      while (true) {
        digitalWrite(JS8,led);
        delay(500);
@@ -133,11 +135,12 @@ void SI4735_setup()
      }
   }
   digitalWrite(JS8,HIGH);
-  _INFO("Si473x I2C address is %04x\n",si4735Addr);
+  _INFO("Si473x device found I2C address is %04x\n",si4735Addr);
   delay(500);
 
   rx.setup(SI4735_RESET, AM_FUNCTION);
   delay(10);
+  _INFO("Si473x device reset completed\n");
   enabled=true;
 
   SI4735_loadSSB(Band_slot);
@@ -153,7 +156,7 @@ void SI4735_Status() {
   if (!enabled) return;
   uint16_t currentFrequency = rx.getFrequency();
   rx.getCurrentReceivedSignalQuality();
-  _INFO("f=%d MHz SNR: %8.2f dB Signal: %8.2f dBuV\n",currentFrequency / 100.0,rx.getCurrentSNR(),rx.getCurrentRSSI());
+  _INFO("f=%d KHz SNR: %8.2f dB Signal: %8.2f dBuV\n",currentFrequency,rx.getCurrentSNR(),rx.getCurrentRSSI());
 
 }
 #endif //RX_SI473X
