@@ -2008,7 +2008,7 @@ void INIT() {
     resetEEPROM();
   } else  {
     //--------------- EEPROM INIT VALUES
-    _INFO("EEPROM reading completed\n");
+    _INFO("EEPROM reading completed EEPROM build(%s) Firmware build(%s)\n",build,(char*)BUILD);
     readEEPROM();
 
   }
