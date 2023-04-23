@@ -90,6 +90,7 @@ Based on the board designed by Charudatt (VU2UPX.
 Although not the preferred nor recommended mode of updating the firmware some specific levels might have a binary version (.uf2) available. It can be located at the
  ./bin directory.
 The files are named using the following convention:
+
 ```
 RDX-rp2040.ino.rpipico.uf2  for the Raspberry pico version
 RDX-rp2040.ino.rpipicow.uf2 for the Raspberry pico Wireless version
@@ -100,7 +101,7 @@ if a different configuration is needed a full compilation needs to be performed
 ```
 Please note the ./src/build directory might have binary files but would usually be intermediate development versions not recommended to flash as firmware, when using a 
 binary distribution always pick it from the binary directory as it would be a more stable version, or better still compile the latest version with the proper
-configuration for your setup
+configuration for your setup.
 ```
 
 ### Procedure for Windows 10
