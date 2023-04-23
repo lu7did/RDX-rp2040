@@ -637,7 +637,7 @@ Support for the Si473x chipset can be included by enabling the initializacion th
 		with the current band parameters.
 	*	On each band change the chip is also set to the new frequency.
 
-Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_v2_Schematic.pdf "RDX Schematic").
+Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_V2_Schematic.png "RDX Schematic").
 
 A figure of the populated board is
 ![Alt Text](./docs/RDX_v2.png "RDX Board populated")
