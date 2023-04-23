@@ -147,13 +147,7 @@ void SI473x_Setup()
   Set the Audio bandwidth to 4 KHz
 */
   rx.setSSBAudioBandwidth(bandwidthIdx);
-/*----------------
-  Establish the sideband cutoff filter based on the audio bandwidth set
- */
-  if (bandwidthIdx == 0 || bandwidthIdx == 4 || bandwidthIdx == 5)
-      {rx.setSSBSidebandCutoffFilter(0);}
-  else
-      {rx.setSSBSidebandCutoffFilter(1);}
+  rx.setSSBSidebandCutoffFilter(1);
   
   rx.setSSBBfo(currentBFO);  
   _INFO("set BFO as %d\n",currentBFO);
