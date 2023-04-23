@@ -3,11 +3,7 @@
 #ifdef RX_SI473X
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
  * RDX_Si4735.ino                                                                              *
- * Simple Proof of Concept (PoC) sketch for the RDX transceiver operating with the Si4735 chip *
- * Uses the POC_01 sketch in the PU2CLR Si4735 Library as the starting point                   *
- *                                                                                             *
- * The table below shows the Si4735 and RASPBERRY PICO connections modified for the RDX project*
- *                                                                                             *   
+ * The table below shows the Si4735 and RASPBERRY PICO connections modified for the RDX project*                                                                                           *   
  * | ---------------| ---------- |                                                             *
  * | Si4735 pin     |  PICO Pin  |                                                             *
  * | ---------------| ---------- |                                                             *
@@ -16,9 +12,10 @@
  * | CLK (pin 17)   |     GP1    |                                                             *
  * | ---------------| ---------- |                                                             *
  * PU2CLR Si47XX API documentation: https://pu2clr.github.io/SI4735/extras/apidoc/html/        *
- * RDX project documentation: 
+ * RDX project documentation: http://www.github.com/lu7did/RDX-rp2040                          *
  *                                                                                             *
  * Released by the public domain By Ricardo Lima Caratti, Nov 2019.                            *
+ * Released to the public domain By Dr. Pedro E. Colla, Apr 2023.                              *
  *---------------------------------------------------------------------------------------------*
   Copyright (c) 2019 by Ricardo Lima Caratti. All rights reserved.                     
   This file is part of the Arduino Pico core board library for Arduino environment.
@@ -37,10 +34,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *---------------------------------------------------------------------------------------------*
- * Adaptation and integration with RDX project by Dr. Pedro E. Colla (LU7DZ) 2022              *
- * This implementation provides a simplified setup to be used for debugging purposes, the      *
- * final firmware resulting from experimentation will be integrated into the RDX transceiver   *
- * Pinout adapted to the pin allocation of the RDX project blueprint                           *
+ * Adaptation and integration with RDX project by Dr. Pedro E. Colla (LU7DZ) 2022,2023         *
  *                                                                                             *
  * | ---------------| ---------- |                                                             *
  * | Si4735 pin     |   RDX Pin  |                                                             *
