@@ -637,6 +637,7 @@ Support for the Si473x chipset can be included by enabling the initializacion th
 		with the current band parameters.
 	*	On each band change the chip is also set to the new frequency.
 
+![Alt Text](./docs/RDX_hardware.png "RDX board hardware (assembled)")
 Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_V2_Schematic.png "RDX Schematic").
 
 A figure of the populated board is
@@ -694,29 +695,30 @@ This is the informal roadmap followed to prioritize and implement the future fea
 
 ## Pending
 
-* Develop or adopt a PCB layout design.
-* Support for Si4735 chipset based receiver
 * Hardware interface to SD-Card/Export
 * Organize and add functionality for icons (partial)
 
 ## low priority roadmap
 
+* CAT support (TS2000 to be compatible with ADX).
 * Support for smaller display (partial)
-* CAT support (TS480).
 * WSPR beacon.
 * Support for QUAD multifilter board
-* CW operation (basic, emergency)
-* GPS support (time alignment & grid definition)
 * Support for ATU reset
 * SWR indicator & control (as HW support is introduced)
 * Filter support (as HW support is introduced)
+* CW operation (basic, emergency)
+* GPS support (time alignment & grid definition)
 
 ## rp2040-w specific
 
 * OTA firmware update
 
 
-## Done (as per V2.0 build 70)
+## Done (as per V2.0 build 80)
+
+* Develop or adopt a PCB layout design.
+* Support for Si4735 chipset based receiver
 * Support for smaller display (partial)
 * File system (SD card based and USB based)
 * Migrate signal processing to core1 (strategy to the DMA error).
