@@ -91,7 +91,6 @@ Although not the preferred nor recommended mode of updating the firmware some sp
  ./bin directory.
 The files are named using the following convention:
 
-```
 RDX-rp2040.ino.rpipico.uf2  for the Raspberry pico version
 RDX-rp2040.ino.rpipicow.uf2 for the Raspberry pico Wireless version
 
