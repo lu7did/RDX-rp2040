@@ -642,7 +642,7 @@ Schematic for this board can be seen in the following file ![Alt Text](./docs/RD
 A figure of the populated board is
 ![Alt Text](./docs/RDX_v2.png "RDX Board populated")
 
-Gerber files for the board can be found at Github site [link](http://www.github.com/LU7DID/RDX-rp2040/docs/GERB_OUTPUT_RDX_V2").
+Gerber files for the board can be found at Github site [link](http://www.github.com/LU7DID/RDX-rp2040/docs/GERB_OUTPUT_RDX_V2).
 
 At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
 
