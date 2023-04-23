@@ -637,12 +637,12 @@ Support for the Si473x chipset can be included by enabling the initializacion th
 		with the current band parameters.
 	*	On each band change the chip is also set to the new frequency.
 
-Schematic for this board can be seen in the following file ![Alt Text](./docs/"RDX v2 Schematic.pdf" "RDX Schematic").
+Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_v2_Schematic.pdf "RDX Schematic").
 
 A figure of the populated board is
-![Alt Text](./docs/"RDX v2.png" "RDX Board populated")
+![Alt Text](./docs/RDX_v2.png "RDX Board populated")
 
-Gerber files for the board can be found at Github site [link](http://www.github.com/LU7DID/RDX-rp2040/docs/"GERB OUTPUT RDX v2").
+Gerber files for the board can be found at Github site [link](http://www.github.com/LU7DID/RDX-rp2040/docs/GERB_OUTPUT_RDX_V2").
 
 At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
 
