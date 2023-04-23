@@ -78,7 +78,7 @@ Same hardware than the supported by the ADX-rp2040 firmware,  with the following
 
 ## RDX board
 
-Based on the board designed by Charudatt (VU2UPX.
+Based on the board designed by Charudatt (VU2UPX).
 
 *	Si473x chipsed for receiving.
 *	Enhanced layout
@@ -94,13 +94,15 @@ The files are named using the following convention:
 RDX-rp2040.ino.rpipico.uf2  for the Raspberry pico version
 RDX-rp2040.ino.rpipicow.uf2 for the Raspberry pico Wireless version
 
-The compilation occurs with specific feature and function configuration definitions, typically the documented in the .ino source file
-if a different configuration is needed a full compilation needs to be performed
+The compilation occurs with specific feature and function configuration definitions, typically
+the documented in the .ino source file if a different configuration is needed a full compilation
+needs to be performed
 
 ```
-Please note the ./src/build directory might have binary files but would usually be intermediate development versions not recommended to flash as firmware, when using a 
-binary distribution always pick it from the binary directory as it would be a more stable version, or better still compile the latest version with the proper
-configuration for your setup.
+Please note the ./src/build directory might have binary files but would usually be intermediate
+development versions not recommended to flash as firmware, when using a binary distribution always
+pick it from the binary directory as it would be a more stable version, or better still compile
+the latest version with the proper configuration for your setup.
 ```
 
 ### Procedure for Windows 10
@@ -142,6 +144,7 @@ by Earle F. Philhower III  plus the following libraries:
 *	[TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) Library by Bodmer
 *	[TFT_eWidget](https://github.com/Bodmer/TFT_eWidget) Library by Bodmer 
 *	[MDNS_Generic](https://github.com/khoih-prog/MDNS_Generic) Library by Khoi Hoang.
+*	[Si4735](https://github.com/pu2clr/SI4735) Library by Ricardo (PU2CLR), if the RDX board is used.
 
 ```
 Warning
@@ -158,6 +161,7 @@ Code excerpts gathered from manyfold sources to recognize here, large pieces of 
 * [PixiePi](https://github.com/lu7did/PixiePi).
 * [Pixino](https://github.com/lu7did/Pixino).
 * [OrangeThunder](https://github.com/lu7did/OrangeThunder).
+* [SI4735](https://github.com/pu2clr/SI4735).
 
 ## Code structure
 
@@ -460,9 +464,14 @@ machine); this USB drive will contain a single file named **rdx_toolbook.txt** c
 
 ## GUI
 
-The disposition of the LCD is just to make the hardware development more amenable, but it should be placed on top of the transceiver in some form of "sandwich" configuration.
+In the RDX board it is placed on top of the transceiver in some form of "sandwich" configuration.
 
-![Alt Text](./docs/RDX-rp2040-GUI.jpg "RDX GUI Prototype")
+![Alt Text](./docs/RDX_hardware.png "RDX Board (VU2UPX)")
+
+Other previous, prototype, versions placed the TFT on the side of the board.
+
+![Alt Text](./docs/RDX-rp2040-GUI.jpg "RDX prototype")
+
 
 The main areas of the GUI are:
 
@@ -564,15 +573,16 @@ to validate neither the proper filter nor a reasonable SWR level when the TX is 
 
 # Hardware
 
-The hardware required by this transceiver derives directly from the ADX Transceiver (WB2CBA), the implementation can take basically two forms:
+The hardware required by this transceiver derives directly from the ADX Transceiver (WB2CBA), the implementation might take several forms:
 
-* Build a hand wired version of the circuit.
+* Build a hand wired version of the RDX circuit. 
 * Build an ADX transceiver and replace the Arduino Nano with the ADX2PDX daughter board created by Barb (WB2CBA), see below.
+* Build the RDX board as designed by Chardutatt (VU2UPX).
 
 ## ADX_rp2040 circuit
 
 The circuit used is esentially the ADX transceiver with the minimum set of modifications to accomodate a Raspberry pico (rp2040 processor) instead of an
- Arduino Nano (ATMEGA328p processor).
+Arduino Nano (ATMEGA328p processor).
 The following diagram has been originally conceived by Dhiru (VU3CER) and put together by Barb (WB2CBA):
 
 ![Alt Text](./docs/PDX_V1.0_Schematic.jpg "PDX Schematic")
@@ -586,6 +596,7 @@ accomodate the different signaling and voltages used.
 ### rp2040 pinout assignment
 
 Same as the ADX-rp2040 project
+
 ![Alt Text](./docs/rp2040_pinout.jpg "rp2040 pinout")
 
 ### Power supply
@@ -594,7 +605,7 @@ Same as the ADX-rp2040 project
 
 ### Receiver
 
-The receiver sub-system is identical than the ADX Transceiver.
+The receiver sub-system is identical than the ADX Transceiver using a CD2003GP chipset (or similar).
 
 ### SWR protection
 
@@ -606,18 +617,21 @@ The RF power (driver and finals) is identical than the ADX Transceiver.
 
 ### Low Pass Filter
 
-The Low Pass Filter (actually more than that) is needed to suppress unwanted spurious responses and also to achieve high efficiency class E operation.
-The design is identical than the ADX Transceiver.
+The Low Pass Filter (actually more than that as it defines the class E operation of the finals ) is
+ needed to suppress unwanted spurious responses and also to achieve high efficiency class E 
+operation. The design is identical than the ADX Transceiver.
 
 
-### ADX2PDX daughter board
+## ADX2PDX daughter board
 
-Same as the ADX-rp2040 project
+The board is plugged into the Arduino Nano socket of an ADX standard board, eligible firmware 
+is ADX-rp2040.
 
 
-## RDX-rp2040 modifications
+### RDX-rp2040 modifications
 
-The following modifications applies to both the schematic of the RDX transceiver or the ADX2PDX daughterboard.
+The following modifications applies to both the schematic of the RDX transceiver or the ADX2PDX daughterboard to
+run the RDX-rp2040 firmware.
 ```
 
  * Build a small class A audio amplifier.
@@ -629,30 +643,15 @@ A suitable circuit can be seen in the following schematic
 
 ![Alt Text](./docs/RDX-rp2040-AF.png "Audio amplifier")
 
-## RDX board from Charudatt (VU2UPX) - Si473x Chipset support
+### ADX2PDX daughter board prototype fixes
 
-Support for the Si473x chipset can be included by enabling the initializacion thru the **#include RX_SI4735  1** 
+Same as the ADX-rp2040 project
 
-	*	During initialization a search in the I2C bus is made looking for a Si473x chip, if found the SSB patch is loaded and the chip is initialized
-		with the current band parameters.
-	*	On each band change the chip is also set to the new frequency.
+### ADX2PDX PCB
 
-![Alt Text](./docs/RDX_hardware.png "RDX board hardware (assembled)")
-Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_V2_Schematic.png "RDX Schematic").
+Same as the ADX-rp2040 project
 
-A figure of the populated board is
-![Alt Text](./docs/RDX_v2.png "RDX Board populated")
 
-Gerber files for the board can be found at Github site **http://www.github.com/LU7DID/RDX-rp2040/docs/** as **RDX_Si4732_GERB_OUTPUT.zip**.
-
-At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
-
-```
-Si4732 or Si4735
-
-The bootup procedure would take into account the differences in address between both chips.
-```
- 
 ## TFT LCD display support
 
 The firmware supports a TFT LCD IL9488 480x320 display where a GUI is presented allowing the operation of the transceiver, the LCD is optional
@@ -675,14 +674,32 @@ but still allow some manual functionality to be preserved, therefore it's a miti
 specified hardware.
 ```
 
-## ADX2PDX daughter board prototype fixes
+## RDX board from Charudatt (VU2UPX) - Si473x Chipset support
 
-Same as the ADX-rp2040 project
+Support for the Si473x chipset can be included by enabling the initializacion thru the **#include RX_SI4735  1** 
+otherwise the board will default to a CD2003GP.
 
-## ADX2PDX PCB
+	*	During initialization a search in the I2C bus is made looking for a Si473x chip, if found the SSB patch is loaded and the chip is initialized
+		with the current band parameters.
+	*	On each band change the chip is also set to the new frequency.
 
-Same as the ADX-rp2040 project
+![Alt Text](./docs/RDX_hardware.png "RDX board hardware (assembled)")
 
+Schematic for this board can be seen in the following file ![Alt Text](./docs/RDX_V2_Schematic.png "RDX Schematic").
+
+A figure of the populated board is
+![Alt Text](./docs/RDX_v2.png "RDX Board populated")
+
+Gerber files for the board can be found at Github site **http://www.github.com/LU7DID/RDX-rp2040/docs/** as **RDX_Si4732_GERB_OUTPUT.zip**.
+
+At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
+
+```
+Si4732 or Si4735
+
+The bootup procedure would take into account the differences in address between both chips.
+```
+ 
 
 # Testing
 

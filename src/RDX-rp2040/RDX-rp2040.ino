@@ -1706,8 +1706,8 @@ void updateEEPROM() {
     EEPROM.put(EEPROM_ADDR_SLOT, temp);
     
     EEPROM.put(EEPROM_ADDR_BUILD,build);
-    EEPROM.put(EEPROM_ADDR_MYCALL,my_callsign);
-    EEPROM.put(EEPROM_ADDR_MYGRID,my_grid);  
+    //EEPROM.put(EEPROM_ADDR_MYCALL,my_callsign);
+    //EEPROM.put(EEPROM_ADDR_MYGRID,my_grid);  
     EEPROM.put(EEPROM_ADDR_ADIF,adiffile);
     
 #ifdef DATALOGGERUSB
@@ -2100,8 +2100,9 @@ void readEEPROM() {
   
     EEPROM.get(EEPROM_ADDR_CAL, cal_factor);
     EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);
-    EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
-    EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
+    
+    //EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
+    //EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
 
     EEPROM.get(EEPROM_ADDR_MAXTX,maxTx);
     EEPROM.get(EEPROM_ADDR_MAXTRY,maxTry);
@@ -2138,8 +2139,8 @@ void resetEEPROM() {
     cal_factor = 100000;
     Band_slot  = 1;
 
-    strcpy(my_callsign,MY_CALLSIGN);
-    strcpy(my_grid,MY_GRID);   
+    //strcpy(my_callsign,MY_CALLSIGN);
+    //strcpy(my_grid,MY_GRID);   
     strcpy(build,BUILD);
 
     strcpy(adiffile,ADIFFILE);

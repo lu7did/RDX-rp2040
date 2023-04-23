@@ -70,7 +70,7 @@ int currentBFO = 975;
 uint16_t currentFrequency;
 uint8_t currentStep = 1;
 uint8_t currentBFOStep = 25;
-uint8_t bandwidthIdx = 2;
+uint8_t bandwidthIdx = 3;   //Was 2 for 3.0 KHz, now it is 3 for 4.0 KHz
 const char *bandwidth[] = {"1.2", "2.2", "3.0", "4.0", "0.5", "1.0"};
 uint8_t currentAGCAtt = 0;  // currentAGCAtt == 0)
 uint8_t si473x_rssi   = 0;
@@ -143,6 +143,10 @@ void SI473x_Setup()
   rx.setFrequencyStep(currentStep);  
   _INFO("set FrequencyStep as %d\n",currentStep);
 
+/*----------------
+  Set the Audio bandwidth to 4 KHz
+*/
+  rx.setSSBAudioBandwidth(bandwidthIdx);
 /*----------------
   Establish the sideband cutoff filter based on the audio bandwidth set
  */
