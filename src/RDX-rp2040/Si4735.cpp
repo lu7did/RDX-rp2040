@@ -60,103 +60,159 @@ const uint16_t size_content = sizeof ssb_patch_content; // see patch_init.h
 //*                       Global varibles                                                       *
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 bool led=false;
-bool enabled=false;
+bool SI473x_enabled=false;
 bool disableAgc=false;
 bool avc_en=true;
-uint8_t currentAGCAtt=0;
 
 SI4735 rx;
 
+int currentBFO = 975;
+uint16_t currentFrequency;
+uint8_t currentStep = 1;
+uint8_t currentBFOStep = 25;
+uint8_t bandwidthIdx = 2;
+const char *bandwidth[] = {"1.2", "2.2", "3.0", "4.0", "0.5", "1.0"};
+uint8_t currentAGCAtt = 0;  // currentAGCAtt == 0)
+uint8_t si473x_rssi   = 0;
+
 /*------------------------------------------------------------------------------------------
- * load the SSB patch and reset the receiver upon initial load and at every band change
- * (not sure if when a setSSB function is called the patch has to be loaded again )
- * pending of research for future optimization
- *-----------------------------------------------------------------------------------------*/
-void SI4735_loadSSB(int s) {
+ * set the Si473x chip frequency 
+  *-----------------------------------------------------------------------------------------*/
+void SI473x_setFrequency(int s) {
 
-if (!enabled) return;
+  uint16_t b=Bands[s-1];
+  uint16_t i=Band2Idx(b);
 
-rx.setI2CFastModeCustom(500000); // Increase the transfer I2C speed
-rx.loadPatch(ssb_patch_content, size_content, FT8_BANDWIDTH_IDX);
-rx.setI2CFastModeCustom(100000); // Increase the transfer I2C speed
-rx.setI2CFastMode();
-delay(10);
-_INFO("SSB patch loaded\n");
-
-rx.setTuneFrequencyAntennaCapacitor(1);
-delay(10);
-
-uint16_t b=Bands[s-1];
-uint16_t i=Band2Idx(b);
- 
-rx.setSSB(minFreq(i),maxFreq(i),currFreq(i),FT8_STEP, FT8_USB);
-delay(10);
-_INFO("Frequency set[%d,%d,%d] getFrequency=%d\n",minFreq(i),maxFreq(i),currFreq(i),rx.getFrequency());
-
-rx.setFrequencyStep(FT8_STEP);
-rx.setSSBAudioBandwidth(FT8_USB);
-rx.setSSBSidebandCutoffFilter(1);
-rx.setSSBBfo(0);     //try 975
-rx.setAutomaticGainControl(disableAgc, currentAGCAtt);
-rx.setSSBAutomaticVolumeControl(avc_en);
-rx.setAvcAmMaxGain(65);    // Sets the maximum gain for automatic volume control on AM/SSB mode (from 12 to 90dB)
-rx.setVolume(45);    //MV
-
-rx.setSSBAutomaticVolumeControl(1);
-delay(100);
-
-rx.setAutomaticGainControl(false, 0);
-delay(100);
-
-rx.setAmSoftMuteMaxAttenuation(0); // Soft Mute for AM or SSB
-_INFO("Si473x f=%d fmin=%d fmax=%d step=%d mode=%d\n",currFreq(i),minFreq(i),maxFreq(i),FT8_STEP,FT8_USB);
-
-return;
-
-}
-//*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-//*                       Setup                                                                 *
-//*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-void SI4735_setup()
-{
-
-  digitalWrite(SI4735_RESET, HIGH);
-  _INFO("looking for a Si473x chip\n");
-
-  // Look for the Si47XX I2C bus address
-  int16_t si4735Addr = rx.getDeviceI2CAddress(SI4735_RESET);
-  if ( si4735Addr == 0 ) {
-    _INFO("Si473x device not found on I2C bus, blocking\n");
-    led=true;
-     while (true) {
-       digitalWrite(JS8,led);
-       delay(500);
-       led=!led;
-     }
-  }
-  digitalWrite(JS8,HIGH);
-  _INFO("Si473x device found I2C address is %04x\n",si4735Addr);
-  delay(500);
-
-  rx.setup(SI4735_RESET, AM_FUNCTION);
+  uint16_t minimumFreq=uint16_t(slot[i][1]/1000);
+  uint16_t maximumFreq=uint16_t(slot[i][2]/1000);
+  uint16_t currentFreq=uint16_t(slot[i][0]/1000);
+  uint16_t currentStep=1;
+  uint16_t currentSSB=USB;
+   
+  rx.setSSB(minimumFreq,maximumFreq,currentFreq,currentStep,currentSSB);
   delay(10);
-  _INFO("Si473x device reset completed\n");
-  enabled=true;
-
-  SI4735_loadSSB(Band_slot);
-  _INFO("Si473x SSB mode enabled\n");
-
+  currentFrequency = rx.getCurrentFrequency();
+  String freqDisplay;
+  freqDisplay = String((float)currentFrequency / 1000, 3);
+  _INFO("Frequency set to %s. KHz\n",freqDisplay.c_str());
 
 }
+/*------------------------------------------------------------------------------------------
+ * setup the Si473x sub-system, find out the Si473x chip I2C address and connect to it
+ * then initialize the frequency of operation and other parameters needed.
+  *-----------------------------------------------------------------------------------------*/
+void SI473x_Setup()
+{
+  digitalWrite(RESET_SI473X, HIGH);
+  delay(10);
+
+  _INFO("Loading Si473x library (c) PU2CLR in SSB mode reset(%d)\n",int16_t(RESET_SI473X));
+  
+  /*-------------------------------------
+    get the Si473x I2C buss address
+   */
+  int16_t si473xAddr = rx.getDeviceI2CAddress(RESET_SI473X);
+  if ( si473xAddr == 0 ) {
+    _INFO("Si473X chip not found, processing is blocked!\n");
+    while (1);
+  } else {
+    _INFO("Si473X chip found at address 0x%X\n",si473xAddr);
+  }
+
+  rx.setup(RESET_SI473X, AM_FUNCTION);
+  delay(10);
+
+  
+  _INFO("SSB patch is loading...\n");
+  long et1 = millis();
+  rx.setI2CFastModeCustom(500000); // Increase the transfer I2C speed
+  rx.loadPatch(ssb_patch_content, size_content); // It is a legacy function. See loadCompressedPatch 
+  rx.setI2CFastMode(); 
+  long et2 = millis();
+ 
+  _INFO("SSB patch loaded successfully (%ld msec)\n",(et2-et1));
+  delay(10);
+  
+  rx.setTuneFrequencyAntennaCapacitor(1); // Set antenna tuning capacitor for SW.
+
+  SI473x_setFrequency(Band_slot);
+  
+  currentStep = 1;
+
+  delay(10); 
+  rx.setFrequencyStep(currentStep);  
+  _INFO("set FrequencyStep as %d\n",currentStep);
+
+/*----------------
+  Establish the sideband cutoff filter based on the audio bandwidth set
+ */
+  if (bandwidthIdx == 0 || bandwidthIdx == 4 || bandwidthIdx == 5)
+      {rx.setSSBSidebandCutoffFilter(0);}
+  else
+      {rx.setSSBSidebandCutoffFilter(1);}
+  
+  rx.setSSBBfo(currentBFO);  
+  _INFO("set BFO as %d\n",currentBFO);
+
+/*-----------------
+  Switch on/off AGC disableAGC=1 disable, AGC Index=0. Minimum attenuation (max gain)
+*/  
+  rx.setAutomaticGainControl(disableAgc, currentAGCAtt);  
+  _INFO("set AGC as %d==%d\n",disableAgc,currentAGCAtt);
+
+  rx.setSSBAutomaticVolumeControl(avc_en);  
+  _INFO("set Volume as %d\n",avc_en);
+
+/*------------------
+  Maximum gain for automatic volume control on AM/SSB mode (12 to 90dB)
+*/
+  rx.setVolume(45);    //MV
+  delay(10);
+
+  currentFrequency = rx.getCurrentFrequency();
+  String freqDisplay;
+  freqDisplay = String((float)currentFrequency / 1000, 3);
+   _INFO("current frequency read from Si473x is %s\n",freqDisplay.c_str());
+ 
+  SI473x_enabled=true;
+  SI473x_Status(); //for test purpose only
+ 
+
+} //SI473x_setup() end
+
 /*-----------------------------------------
  * Show the current receiver status
  */
-void SI4735_Status() {
+void SI473x_Status() {
 
-  if (!enabled) return;
-  uint16_t currentFrequency = rx.getFrequency();
+if (!SI473x_enabled) return;
+
+  rx.getAutomaticGainControl();
   rx.getCurrentReceivedSignalQuality();
-  _INFO("f=%d KHz SNR: %8.2f dB Signal: %8.2f dBuV\n",currentFrequency,rx.getCurrentSNR(),rx.getCurrentRSSI());
 
+  String bfo;
+  if (currentBFO > 0)
+    bfo = "+" + String(currentBFO);
+  else
+    bfo = String(currentBFO);
+
+  currentFrequency = rx.getCurrentFrequency();
+  String freqDisplay;
+  freqDisplay = String((float)currentFrequency / 1000, 3);
+
+  _INFO("|AGC:%s|LNA GAIN index:%d/%d|BW:%s KHz|SNR %d|RSSI %d dBuV|Volume: %d|BFO %s|BFOStep: %d|freq=%s|Step: %d|\n", \
+       (rx.isAgcEnabled() ? "AGC ON" : "AGC OFF"), \
+        rx.getAgcGainIndex(), \
+        currentAGCAtt, \
+        bandwidth[bandwidthIdx], \
+        rx.getCurrentSNR(), \
+        rx.getCurrentRSSI(), \
+        rx.getVolume(), \
+        bfo.c_str(), \
+        currentBFOStep, \
+        freqDisplay.c_str(), \
+        currentStep);
+
+  
 }
 #endif //RX_SI473X

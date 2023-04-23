@@ -59,9 +59,15 @@ build 70
 
 build 72
 * initial support for Si473x chipset
+
+build 80
+* Enhanced support for Si473x chipset
+* Initial support for RDX board from Charudatt (VU2UPX)
 ```
 
 # Hardware
+
+## ADX-rp2040 board
 
 Same hardware than the supported by the ADX-rp2040 firmware,  with the following additions.
 
@@ -70,6 +76,12 @@ Same hardware than the supported by the ADX-rp2040 firmware,  with the following
 *	TFT LCD IL9488 480x320 board (see wiring). 
 *	Si473x receiver chipset
 
+## RDX board
+
+Based on the board designed by Charudatt (VU2UPX.
+
+*	Si473x chipsed for receiving.
+*	Enhanced layout
 
 # Firmware
 
@@ -86,8 +98,10 @@ The compilation occurs with specific feature and function configuration definiti
 if a different configuration is needed a full compilation needs to be performed
 
 ```
-Please note the ./src directory might have binary files but would usually be intermediate development versions not recommended to flash as firmware, when using a 
-binary distribution always pick it from the binary directory as it would be a more stable version.
+Please note the ./src/build directory might have binary files but would usually be intermediate development versions not recommended to flash as firmware, when using a 
+binary distribution always pick it from the binary directory as it would be a more stable version, or better still compile the latest version with the proper
+configuration for your setup
+```
 
 ### Procedure for Windows 10
 
@@ -615,26 +629,27 @@ A suitable circuit can be seen in the following schematic
 
 ![Alt Text](./docs/RDX-rp2040-AF.png "Audio amplifier")
 
-## Si473x Chipset support
+## RDX board from Charudatt (VU2UPX) - Si473x Chipset support
 
-An initial support for the Si473x chipset can be included by enabling the initializacion thru the **#include RX_SI4735  1** 
+Support for the Si473x chipset can be included by enabling the initializacion thru the **#include RX_SI4735  1** 
 
 	*	During initialization a search in the I2C bus is made looking for a Si473x chip, if found the SSB patch is loaded and the chip is initialized
 		with the current band parameters.
-	*	On each band change the chip is reset and the new band parameters is loaded.
+	*	On each band change the chip is also set to the new frequency.
+
+Schematic for this board can be seen in the following file ![Alt Text](./docs/"RDX v2 Schematic.pdf" "RDX Schematic").
+
+A figure of the populated board is
+![Alt Text](./docs/"RDX v2.png" "RDX Board populated")
+
+Gerber files for the board can be found at Github site [link](http://www.github.com/LU7DID/RDX-rp2040/docs/"GERB OUTPUT RDX v2").
 
 At this point there is no dynamic control of the Si473x chip parameters, only parameters changed thru build time. 
 
 ```
-Si4732 chipset (experimental)
+Si4732 or Si4735
 
-To take into account the initialization differences between the Si4732 and the Si4735, chips otherwise
-equivalent from the command set standpoint, a compilation directive exclusive for the Si4732 has been
-included.
-
-#define SI4732 	1
-
-If not using a Si4732 chipset this clause must be commented out.
+The bootup procedure would take into account the differences in address between both chips.
 ```
  
 ## TFT LCD display support

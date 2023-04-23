@@ -1313,7 +1313,7 @@ _INFO("USB ADIF export activated\n");
 #endif //MULTICORE
   
 #ifdef RX_SI473X
-  SI4735_setup();
+  SI473x_Setup();
   _INFO("Si4735 receiver initialized\n");
 #endif //RX_SI473X
 
@@ -1348,10 +1348,12 @@ void loop()
   ft8_run();
 
   #ifdef RX_SI473X
+  #ifdef TRACE_SI473X
   /*------------------------------------------------
      If Si4735 enabled then show status
   */
-  SI4735_Status();
+  SI473x_Status();
+  #endif //TRACE_SI473X  
   #endif //RX_SI473X
 
 }
@@ -1519,25 +1521,38 @@ void ManualTX() {
  * min Freq
  *----------------------------------------*/
 uint16_t minFreq(uint16_t i){
-  uint16_t mf=slot[i][0]/1000;
+  unsigned long s=slot[i][1];
+  unsigned long f=s/1000;
+  _INFO("index received(%d) s(%ld) freq(%ld)\n",i,s,f);
+  uint16_t mf=uint16_t(f);
   _INFO("Slot[%d] f=%d KHz\n",i,mf);
+  delay(1000);
   return mf;
 }
 /*----------------------------------------
  * max Freq
  *----------------------------------------*/
 uint16_t maxFreq(uint16_t i){
-  uint16_t mf=slot[i][0]/1000;
+  unsigned long s=slot[i][2];
+  unsigned long f=s/1000;
+  _INFO("index received(%d) s(%ld) freq(%ld)\n",i,s,f);
+  uint16_t mf=uint16_t(f);
   _INFO("Slot[%d] f=%d KHz\n",i,mf);
-  return (mf);
+  delay(1000);
+
+  return mf;
 }
 /*----------------------------------------
  * current Freq
  *----------------------------------------*/
 uint16_t currFreq(uint16_t i){
-  uint16_t cf=slot[i][0]/1000;
-  _INFO("Slot[%d] f=%d KHz\n",i,cf);
-  return cf;
+  unsigned long s=slot[i][0];
+  unsigned long f=s/1000;
+  _INFO("index received(%d) s(%ld) freq(%ld)\n",i,s,f);
+  uint16_t mf=uint16_t(f);
+  _INFO("Slot[%d] f=%d KHz\n",i,mf);
+  delay(1000);
+  return mf;
 }
 
 
@@ -1649,6 +1664,12 @@ while (true) {
   updateEEPROM();
   Band_assign();
   freq=Slot2Freq(Band_slot);
+  
+  #ifdef RX_SI473X
+  SI473x_setFrequency(Band_slot);
+
+  #endif //RX_SI473X
+  
   tft_updateBand();
 
   _INFO("Completed Band assignment Band_slot=%d freq=%lu\n",Band_slot,freq);
@@ -1898,10 +1919,6 @@ unsigned long Slot2Freq(int s) {
   digitalWrite(FT8, LOW);
   digitalWrite(8-Band_slot,HIGH);
 
-  #ifdef RX_SI473X
-  SI4735_loadSSB(s);
-  #endif //RX_SI473X
-
   return slot[i][0];
 
 }
@@ -1976,6 +1993,18 @@ void INIT() {
   gpio_pull_up(FSKpin);
 
   /*---
+     Initialice Si473x sub-system if defined
+  */
+
+#ifdef RX_SI473X
+
+  gpio_init(RESET_SI473X);
+  gpio_pull_up(RESET_SI473X);
+  digitalWrite(RESET_SI473X,HIGH);
+
+#endif //RX_SI473X
+
+  /*---
      Initialice I2C sub-system
   */
 
@@ -1984,13 +2013,7 @@ void INIT() {
   Wire.begin();
 
 
-  #ifdef RX_SI473X
-
-  gpio_init(SI4735_RESET);
-  gpio_pull_up(SI4735_RESET);
-
-  #endif //RX_SI473X
-
+  
   _INFO("I/O setup completed\n");
 
 
@@ -2013,6 +2036,12 @@ void INIT() {
 
   }
   freq=Slot2Freq(Band_slot);
+
+  #ifdef RX_SI473X
+  SI473x_setFrequency(Band_slot);
+ 
+  #endif //RX_SI473X
+  
   _INFO("Band_slot(%d) freq(%ul)\n",Band_slot,freq);
   
   //tft_updateBand();

@@ -863,6 +863,11 @@ void displayRDX::set(int btnIndex,int v) {
                     Band2Str(bandstr);
                     setBtn(btnIndex,bandstr,false,false);
                     freq=Slot2Freq(v+1);
+                    
+                    #ifdef RX_SI473X
+                    SI473x_setFrequency(v+1);
+                    #endif //RX_SI473X
+
                     showFreq();
                     redraw=true;
                     break;

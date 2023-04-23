@@ -191,6 +191,7 @@ void setup()
   Wire.setSDA(I2C_SDA);
   Wire.setSCL(I2C_SCL);
   Wire.begin();
+  delay(500);
   digitalWrite(WSPR,HIGH);
   Serial.println("I/O sub-system initialization completed");
 

@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "75"
+#define BUILD   "80"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -74,7 +74,7 @@ typedef int16_t sigBin[960];
 /*-------------------------------------------------------------*
    Support for the Si473x chipset as a receiver
   -------------------------------------------------------------*/
-//#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
+#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
 /*----------------------
   The following definition is used to force a given I2C address if not found
   by querying the I2C bus
@@ -140,9 +140,22 @@ typedef int16_t sigBin[960];
 #define ADIF 1
 #endif //DATALOGGERUSB
 
-//#define SI4735_RESET   16
-#define SI4735_RESET    1  //Si473x RESET pin
+/*-----------------------------------------------
+  If RX_SI473X receiver defined declare constants
+ *-----------------------------------------------*/
 
+#ifdef RX_SI473X           //Define RESET pin for SI473x if defined
+#define RESET_SI473X    1  //Si473x RESET pin
+#define AM_FUNCTION     1
+#define RESET_PIN       1
+#define LSB             1
+#define USB             2
+
+#ifdef DEBUG
+//#define TRACE_SI473X    1
+#endif //DEBUG
+
+#endif //RX_SI473X
 /*----
    Output control lines
 */
@@ -325,6 +338,8 @@ extern int  tcp_port;
 extern int  http_port;
 extern int  web_port;
 
+extern const unsigned long slot[MAXBAND][3];
+
 
 /*------------------------------------------------------------------
  * System global state variables
@@ -456,19 +471,18 @@ extern struct semaphore spc;      //Semaphore to protect multithread access to t
 
 #ifdef RX_SI473X
 /*-------------------------------------
- * Definitions for the Si4735 chipset
+ * Definitions for the Si473x chipset
  */
 
-extern void SI4735_setup();
-extern void SI4735_loadSSB(int s);
-extern void SI4735_Status();
+extern void SI473x_Setup();
+extern void SI473x_Status(); 
+extern void SI473x_setFrequency(int s);
 
 #endif //RX_SI473X
 
 #ifdef MULTICORE
 
-#define QMAX  3                   //Maximum number of members in the received signal queue
-extern sigBin fresh_signal;       //Most recent signal capture buffer
+#define QMAX  3                   //Maximum number of members in the received signal queue extern sigBin fresh_signal;       //Most recent signal capture buffer
 extern sigBin old_signal;         //signal capture buffer being analyzed
 extern sigBin queued_signal[QMAX];//Actual signal capture queue
 extern uint16_t queueR;           //Signal capture queue read pointer
