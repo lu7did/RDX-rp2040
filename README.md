@@ -588,6 +588,7 @@ however, the implementation differs depending on the board:
 * 	Build an ADX transceiver and replace the Arduino Nano with the ADX2PDX daughter board created by Barb (WB2CBA), see below.
 * 	Build the RDX board as designed by Chardutatt (VU2UPX). The transmitting RF chain is essentially the same than a
 	ADX board but the receiver part is based on the Si473x chipset architecture.
+*	Build any custom board which provides a receiver implementation controlled by the firmware.
 
 ## ADX_rp2040 circuit
 
@@ -660,6 +661,22 @@ Same as the ADX-rp2040 project
 ### ADX2PDX PCB
 
 Same as the ADX-rp2040 project.
+
+## Custom receiver architectures
+
+Although the basic transmitter architecture composed by a Si5351 chip as a clock, a 74HCT244 as a driver and a class E MOSFET based
+amplifier is inherent for this design the receiver chain can be more flexible to be implemented with other configurations
+than the CD2003GP or the Si473x chipset.
+
+The Si473x CLK1 signal is a clock that can be used to control any receiver at the proper frequency, as long as the receiver produces
+an audio baseband with the recovered signal with a proper level to be feed to the Arduino Pico it will become a good suit. In order
+to implement follow up the general guidelines of the ADX-rp2040 design and replace the CD2003GP receiver chain with any other 
+chain you might want to experiment with.
+
+Reports of successful integration with NE602 or TA2003 chipset based receivers has been made.
+
+The Pixino project, implementing a Pixie design with a Si5351 clock is a good foundation for a super-simple, yet capable, 
+transceiver design which can be controlled by the ADX-rp2040 firmware with small or no modifications.
 
 
 ## TFT LCD display support

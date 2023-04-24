@@ -128,6 +128,7 @@
 
 #include "pico/multicore.h"
 #include "hardware/irq.h"
+#include "hardware/watchdog.h"
 
 /*------------------------------------------------------
    Main variables
@@ -425,6 +426,10 @@ void fftCallBack() {
     #else
     bool pen=false;
     #endif //IL9488 
+
+    #ifdef WATERFALL
+    watchdog_update();
+    #endif //WATERFALL
 
     tft_run(pen);
 
@@ -1185,6 +1190,17 @@ _INFO("ADIF loogbook support activated\n");
 _INFO("USB ADIF export activated\n"); 
 #endif
 
+#ifdef WATCHDOG
+_INFO("Hardware Watchdog enabled\n");
+
+if (watchdog_caused_reboot()) {
+        _INFO("Rebooted by Watchdog!\n");
+} else {
+        _INFO("Clean boot\n");
+}
+watchdog_enable(WATCHDOG_TIMER, 1);
+#endif //WATCHDOG
+
   /*-----------
      Data area initialization
   */
@@ -1355,7 +1371,10 @@ void loop()
   SI473x_Status();
   #endif //TRACE_SI473X  
   #endif //RX_SI473X
-
+  
+  #ifdef WATERFALL
+  watchdog_update();
+  #endif //WATERFALL
 }
 //*********************[ END OF MAIN LOOP FUNCTION ]*************************
 //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
