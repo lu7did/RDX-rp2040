@@ -207,4 +207,7 @@ if (!SI473x_enabled) return;
 
   
 }
+int getRSSI() {
+   return int(rx.getCurrentRSSI());
+}
 #endif //RX_SI473X

@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "83"
+#define BUILD   "84"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -477,6 +477,7 @@ extern struct semaphore spc;      //Semaphore to protect multithread access to t
 extern void SI473x_Setup();
 extern void SI473x_Status(); 
 extern void SI473x_setFrequency(int s);
+extern int getRSSI();
 
 #endif //RX_SI473X
 

@@ -366,7 +366,7 @@ other means such as GPS or RTC based synchronization.
 The manual synchronization is the simplest and quickest to implement, it can be implemented on a minimum rp2040 configuration without any TCP/IP
 connectivity, the later having a rp2040_W model as a pre-requisite.
 
-With a manual synchronization Upon startup the rp2040 board starts it's internal clock is set arbitrarly to zero. 
+With a manual synchronization Upon startup the rp2040 board starts it's internal clock which is set arbitrarly to zero (00:00:00).. 
 However, if the **UP** button is found pressed while performing the initial firmware setup the processing is held (all LEDs blinking
 signals that situation). The button can be held pressed until the top of the minute and when released the internal clock is set to 00:00:00 and therefore
 left synchronized.
@@ -466,14 +466,15 @@ machine); this USB drive will contain a single file named **rdx_toolbook.txt** c
 
 ## GUI
 
-In the RDX board it is placed on top of the transceiver in some form of "sandwich" configuration.
+In the RDX board a TFT display it is placed on top of the transceiver in some form of "sandwich" configuration.
 
 ![Alt Text](./docs/RDX_hardware.png "RDX Board (VU2UPX)")
 
-Other previous, prototype, versions placed the TFT on the side of the board.
+Other previous, prototype, versions placed the TFT is placed on the side of the board.
 
 ![Alt Text](./docs/RDX-rp2040-GUI.jpg "RDX prototype")
 
+Either case the TFT display is set to operate as a GUI conduit and accept pen commands thru it.
 
 The main areas of the GUI are:
 
@@ -526,8 +527,12 @@ operative at the end of each FT8 cycle.
 ```
 
 * 	Meter.
-	The meter is meant to display signal strenght (S-Units), power (in Watts), SWR or rx level. At this point only the S-meter is implemented to show a level proportional
-	to the energy in the passband, it will be calibrated approximately to S-units.
+	The meter is meant to display signal strenght (S-Units), power (in Watts), SWR or rx level. The informatin shown will depend
+	on the board type being used:
+	*	**CD2003GP based (ADX-rp2040)**: The S-meter shows a level proportional to the energy on the passband
+		which has been approximately calibrated to S-Unit.
+	*	**Si473x based (RDX)**: The S-meter shows the RSSI information as reported by the Si473x chip converted to
+		S-Units (dBuV to S-Unit) using the formulae Strength(S)=(0.1294*RSSI+3.6512)+1. 
 * 	Display area.
 	The display area shows several controls.
 	*	**Buttons**.
@@ -575,11 +580,14 @@ to validate neither the proper filter nor a reasonable SWR level when the TX is 
 
 # Hardware
 
-The hardware required by this transceiver derives directly from the ADX Transceiver (WB2CBA), the implementation might take several forms:
+The hardware required by this transceiver takes most of it's stages for RF processing from the ADX Transceiver (WB2CBA),
+however, the implementation differs depending on the board:
 
-* Build a hand wired version of the RDX circuit. 
-* Build an ADX transceiver and replace the Arduino Nano with the ADX2PDX daughter board created by Barb (WB2CBA), see below.
-* Build the RDX board as designed by Chardutatt (VU2UPX).
+* 	Build a hand wired version of the RDX circuit. It uses an RF chain essentially as the ADX board with some
+	additional signal conforming stages.
+* 	Build an ADX transceiver and replace the Arduino Nano with the ADX2PDX daughter board created by Barb (WB2CBA), see below.
+* 	Build the RDX board as designed by Chardutatt (VU2UPX). The transmitting RF chain is essentially the same than a
+	ADX board but the receiver part is based on the Si473x chipset architecture.
 
 ## ADX_rp2040 circuit
 
@@ -627,7 +635,7 @@ operation. The design is identical than the ADX Transceiver.
 ## ADX2PDX daughter board
 
 The board is plugged into the Arduino Nano socket of an ADX standard board, eligible firmware 
-is ADX-rp2040.
+is ADX-rp2040, however with some mods (see below) the RDX-rp2040 firmware can be run on it as well.
 
 
 ### RDX-rp2040 modifications
@@ -651,7 +659,7 @@ Same as the ADX-rp2040 project
 
 ### ADX2PDX PCB
 
-Same as the ADX-rp2040 project
+Same as the ADX-rp2040 project.
 
 
 ## TFT LCD display support
@@ -712,7 +720,7 @@ functions will be tested as the implementation evolves.
 
 This is the informal roadmap followed to prioritize and implement the future features of the project
 
-## Pending
+## **Pending**
 
 * Hardware interface to SD-Card/Export
 * Organize and add functionality for icons (partial)
@@ -734,7 +742,7 @@ This is the informal roadmap followed to prioritize and implement the future fea
 * OTA firmware update
 
 
-## Done (as per V2.0 build 80)
+## Done (as per V2.0 build 80 or higher)
 
 * Develop or adopt a PCB layout design.
 * Support for Si4735 chipset based receiver

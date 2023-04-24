@@ -1934,7 +1934,12 @@ void tft_updatewaterfall(int mag[]) {
         magmax = mag[i];
       }
     }
+#ifdef RX_SI473X
+    long int s_signal = ((getRSSI()*1294+3651)/1000);
+    int sunit=int(s_signal+1);
+#else
     int sunit = (int)((0.125 * magmax) - 18.25);
+#endif //RX_SI4735
 
     m.show(SUNIT, sunit);
     memset(mag, 0, 960);
