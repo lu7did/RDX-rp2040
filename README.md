@@ -74,13 +74,15 @@ Same hardware than the supported by the ADX-rp2040 firmware,  with the following
 
 *	Audio amplifier (see modifications).
 *	TFT LCD IL9488 480x320 board (see wiring). 
-*	Si473x receiver chipset
+*	CD2003GP receiver chipset
 
 ## RDX board
 
 Based on the board designed by Charudatt (VU2UPX).
 
 *	Si473x chipsed for receiving.
+*	Audio amplifier (see modifications).
+*	TFT LCD IL9488 480x320 board (see wiring). 
 *	Enhanced layout
 
 # Firmware
