@@ -192,6 +192,14 @@ The sub-system high level logic can be seen in the following UML diagram:
 Even if enabled by default being an experimental feature it can be switched off returning to the previous, single core,
 operationg by commenting out the configuration line **#define MULTICORE 1**.
 
+## Hardware watchdog
+
+In order to have an extra protection against glitches a hardware watchdog can be enabled by means of the directive 
+"#define WATCHDOG 1". When enabled the rp2040 hardware watchdog is set to fire in the variable WATCHDOG_TIMER which
+is set initially to 7000 mSecs (7 secs).
+The watchdog is periodically cleared so it shouldn't fire under normal operation, however it the processor for any
+reason is hung it will clear up that condition by means of rebooting.
+
 ## Configuration Web server
 
 Configuration parameters can also be changed using this facility, once activated it can be accessed using **http://rdx.local:8000"** or **"http://{ip_address}:8000.

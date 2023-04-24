@@ -427,9 +427,9 @@ void fftCallBack() {
     bool pen=false;
     #endif //IL9488 
 
-    #ifdef WATERFALL
+    #ifdef WATCHDOG
     watchdog_update();
-    #endif //WATERFALL
+    #endif //WATCHDOG
 
     tft_run(pen);
 
@@ -1198,7 +1198,7 @@ if (watchdog_caused_reboot()) {
 } else {
         _INFO("Clean boot\n");
 }
-watchdog_enable(WATCHDOG_TIMER, 1);
+
 #endif //WATCHDOG
 
   /*-----------
@@ -1333,6 +1333,12 @@ watchdog_enable(WATCHDOG_TIMER, 1);
   _INFO("Si4735 receiver initialized\n");
 #endif //RX_SI473X
 
+#ifdef WATCHDOG
+uint32_t watchdog_timer=WATCHDOG_TIMER;
+_INFO("Watchdog enabled timeout %ld mSec\n",watchdog_timer);
+watchdog_enable(watchdog_timer, 1);
+#endif //WATCHDOG
+
 _INFO("*** Transceiver ready ***\n");
 
 }
@@ -1372,9 +1378,9 @@ void loop()
   #endif //TRACE_SI473X  
   #endif //RX_SI473X
   
-  #ifdef WATERFALL
+  #ifdef WATCHDOG
   watchdog_update();
-  #endif //WATERFALL
+  #endif //WATCHDOG
 }
 //*********************[ END OF MAIN LOOP FUNCTION ]*************************
 //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=

@@ -216,7 +216,7 @@ typedef int16_t sigBin[960];
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 #define WATCHDOG        1
 #ifdef WATCHDOG
-#define WATCHDOG_TIMER  500
+#define WATCHDOG_TIMER  7000
 #endif //WATCHDOG
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 //*                      GENERAL PURPOSE GLOBAL DEFINITIONS                                     *
