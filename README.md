@@ -110,7 +110,7 @@ Several options can be exercised at bootup by means of the pressing of the Up/Tx
 	LOW	HIGH	LOW	Bootup with with configuration internal web server
 	LOW	HIGH	HIGH	Manual time sync
 	HIGH	LOW	LOW	Bootup with text based command processor
-	HIGH	LOW	HIGH	Not used
+	HIGH	LOW	HIGH	Reset to default values and store in EEPROM
 	HIGH	HIGH	LOW	Perform auto-calibration
 	HIGH	HIGH	HIGH	Normal bootup
 
