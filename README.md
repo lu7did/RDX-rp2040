@@ -27,6 +27,9 @@ Continuing with the roadmap of the project an experimental firmware able to oper
 generating FT8 signals **without** the usage of an external program such as WSJT-X was created, documentation of the
 features on this project called **RDX**, standing for **Raspberry Pico Digital Transceiver**, are documented in this branch of the site.
 
+For a discussion of the FT8 & FT4 protocols the mandatory reading is 
+[FT4 and FT8 Communication Protocol by Franke, Somerville and Taylor](https://wsjt.sourceforge.io/FT4_FT8_QEX.pdf)
+
 ```
 *New in release 2.0 *
 
@@ -63,6 +66,12 @@ build 72
 build 80
 * Enhanced support for Si473x chipset
 * Initial support for RDX board from Charudatt (VU2UPX)
+
+build 85
+* Updated S-Meter for Si473x chipset
+* Watchdog added if the code stalls for more than 7 secs.
+* Reset to default values.
+
 ```
 
 # Hardware
@@ -86,6 +95,27 @@ Based on the board designed by Charudatt (VU2UPX).
 *	Enhanced layout
 
 # Firmware
+
+## Configuration at boot up
+
+Several options can be exercised at bootup by means of the pressing of the Up/Tx/Down push buttons, as follows
+(LOW means pressed, HIGH means up or not pressed)
+
+```
+
+	Up	Tx	Down	Action
+	----	----	----	--------------------------------------------------
+	LOW	LOW	LOW	Not used
+	LOW	LOW	HIGH	Not used
+	LOW	HIGH	LOW	Bootup with with configuration internal web server
+	LOW	HIGH	HIGH	Manual time sync
+	HIGH	LOW	LOW	Bootup with text based command processor
+	HIGH	LOW	HIGH	Not used
+	HIGH	HIGH	LOW	Perform auto-calibration
+	HIGH	HIGH	HIGH	Normal bootup
+
+```
+
 
 ## Binary distribution
 
