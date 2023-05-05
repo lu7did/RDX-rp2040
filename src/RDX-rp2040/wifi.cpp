@@ -105,7 +105,7 @@ void toLowerCase(char *s) {
   }
   z[strlen(s)]=0x00;
   #ifdef DEBUG
-     _INFOLIST("%s entry(%s) exit(%s)\n",__func__,s,z); 
+     _INFO("entry(%s) exit(%s)\n",__func__,s,z); 
   #endif //DEBUG
   strcpy(s,z);
   return;
@@ -132,19 +132,19 @@ int strrepl(char *str, char orig, char rep) {
 */
 bool getClock(char* n1, char* n2) {
 
-  _INFOLIST("%s NTP server pool ntp1(%s) ntp2(%s)\n",__func__,n1,n2);
+  _INFO("NTP server pool ntp1(%s) ntp2(%s)\n",n1,n2);
   NTP.begin(n1, n2);
   bool ntp_rc = NTP.waitSet(wifi_tout * 1000);
 
   if (ntp_rc) {
-    _INFOLIST("%s rc(%s)\n",__func__,BOOL2CHAR(ntp_rc));
+    _INFO("Attempt to connect NTS server failed rc(%s)\n",BOOL2CHAR(ntp_rc));
     return ntp_rc;
   }
   time_t now = time(nullptr);
   struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
 
-  _INFOLIST("%s NTP time synchronization completed now is %s", __func__, asctime(&timeinfo));
+  _INFO("NTP time synchronization completed now is %s",asctime(&timeinfo));
   return ntp_rc;
 }
 
@@ -174,15 +174,15 @@ void nameFound(const char* name, IPAddress ip)
   {
      char ipstr[24];
      Ip2Str(ip,ipstr);
-     _INFOLIST("%s IP for %s is %s\n",__func__,name,ipstr);
+     _INFO("IP for %s is %s\n",name,ipstr);
   }
   else if (ip[0] == 0)
   {
-    _INFOLIST("%s Resolving %s error\n",__func__,name);
+    _INFO("Resolving %s error\n",name);
   }
   else
   {
-    _INFOLIST("%s Resolving %s timeout\n",__func__,name);
+    _INFO("Resolving %s timeout\n",name);
   }
 }
 /*---------
@@ -196,8 +196,8 @@ void init_mdns() {
   strrepl(hostname,' ','-');
   strrepl(hostname,'_','-');
   
-  _INFOLIST("%s Registering mDNS hostname(%s)\n",__func__,hostname);
-  _INFOLIST("%s To access using (%s.local)\n",__func__,hostname);
+  _INFO("Registering mDNS hostname(%s)\n",hostname);
+  _INFO("To access using (%s.local)\n",hostname);
 
   /*----
    * init the mDNS library to respond with the current IP address to any
@@ -205,7 +205,7 @@ void init_mdns() {
    */
   mdns.begin(WiFi.localIP(), hostname);
   mdns.setNameResolvedCallback(nameFound);  
-  _INFOLIST("%s mDNS service started ip(%s)\n",__func__,IpAddress2String(WiFi.localIP()).c_str());
+  _INFO("mDNS service started ip(%s)\n",IpAddress2String(WiFi.localIP()).c_str());
 
 }
 /*-------
@@ -233,8 +233,9 @@ int doping(char *host) {
     Check if there is actual internet connectivity by sending a successful ping to a known host
 */
 int checkInet(char* hostName) {
+  checkAP(wifi_ssid,wifi_psk);
   int pingResult = WiFi.ping(hostName);
-  _INFOLIST("%s Ping host(%s) rtt=%d msec\n", __func__, hostName, pingResult);
+  _INFO("Ping host(%s) rtt=%d msec\n",hostName, pingResult);
   return pingResult;
 }
 
@@ -245,7 +246,7 @@ int checkInet(char* hostName) {
 int checkAP(char* s, char* p) {
 
   if (WiFi.status() == WL_CONNECTED) {
-    _INFOLIST("%s Already connected to ssid(%s) IP(%s)\n", __func__, s, IpAddress2String(WiFi.localIP()).c_str());
+    _INFO("Already connected to ssid(%s) IP(%s)\n", s, IpAddress2String(WiFi.localIP()).c_str());
     return WL_CONNECTED;
   }
 
@@ -258,7 +259,7 @@ int checkAP(char* s, char* p) {
   IPAddress subnet(255,255,255,0); 
   IPAddress dnsserver(8,8,8,8);
   WiFi.config(ip, dnsserver,gateway, subnet);
-  _INFOLIST("%s defining fixed IP\n",__func__);
+  _INFO("defining fixed IP\n");
 #endif //FIXED_IP  
 
   WiFi.begin(s, p);
@@ -269,16 +270,15 @@ int checkAP(char* s, char* p) {
   while (WiFi.status() != WL_CONNECTED) {
     if (time_us_32() - t > wifi_tout * 1000000) {
 
-      _INFOLIST("%s Failed to connect to ssid(%s)\n", __func__, s);
+      _INFO("Failed to connect to ssid(%s)\n", s);
 
       return WiFi.status();
     }
   }
-  _INFOLIST("%s Connected to ssid(%s) IP(%s)\n", __func__, s, IpAddress2String(WiFi.localIP()).c_str());
   delay(200);
 
   rssi=WiFi.RSSI();
-  
+  _INFO("Connected to ssid(%s) IP(%s) rssi(%ld)\n", s, IpAddress2String(WiFi.localIP()).c_str(),rssi);
   sprintf(ipstr,"%s    ",IpAddress2String(WiFi.localIP()).c_str());
   tft_setIP(ipstr);
   return (int) WL_CONNECTED;
@@ -287,10 +287,20 @@ int checkAP(char* s, char* p) {
  * Disconnect from WiFi AP
  */
 void resetAP() {
+  if (WiFi.status() == WL_DISCONNECTED) {
+    _INFO("Already disconnected, ignored\n");
+    return;
+  }
+
+/*------- This is part of a check on Wifi Connection resiliense ----------*/
+  #ifdef DOPING
+  #else  
+  _INFO("WiFi desconnection in progress from IP(%s)\n",IpAddress2String(WiFi.localIP()).c_str());
   WiFi.disconnect();
   sprintf(ipstr," Disconnected");
   tft_setIP(ipstr);
-  _INFOLIST("%s WiFi disconnected\n",__func__);
+
+  #endif //DOPING
 }
 /*---------------------------------------------
    setup_wifi()

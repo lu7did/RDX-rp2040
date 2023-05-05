@@ -1562,7 +1562,7 @@ void footerRDX::init() {
   tft->fillRoundRect(b.xStart, b.yStart, b.width, b.height, b.cornerRadius, b.color);
   tft->setTextFont(2);
   tft->setTextSize(1);
-  tft->setTextColor(TFT_YELLOW, TFT_RED);
+  tft->setTextColor(TFT_YELLOW, TFT_BLACK);
   fh = tft->fontHeight();
 
   time_t now = time(nullptr) - t_ofs;
@@ -1583,14 +1583,14 @@ void footerRDX::show() {
 
   sprintf(hi, "%s version %s(%s)", programname, version, build);
   tft->drawString(hi, b.xStart + 6, b.yStart + YFOOT, 1); // Print the line
-  tft->drawFastVLine (b.xStart + 6 + 16 * 8, b.yStart, 15, TFT_RED);
+  tft->drawFastVLine (b.xStart + 6 + 16 * 8, b.yStart, 15, TFT_BLACK);
   char buf[8];
 
   sprintf(hi, "%s [%s]", my_callsign, my_grid);
   tft->drawString(hi, b.xStart + XFOOT, b.yStart + YFOOT, 1); // Print the line
 
-  tft->drawFastVLine (b.xStart + XFOOT + 9 + 12 + 13 * 6, b.yStart, 18, TFT_RED);
-  tft->drawFastVLine (b.xStart + XFOOT + 14 + 12 + 5 +  6 * 8 + 13 * 6, b.yStart, 18, TFT_RED);
+  tft->drawFastVLine (b.xStart + XFOOT + 9 + 12 + 13 * 6, b.yStart, 18, TFT_BLACK);
+  tft->drawFastVLine (b.xStart + XFOOT + 14 + 12 + 5 +  6 * 8 + 13 * 6, b.yStart, 18, TFT_BLACK);
   if (strcmp(ip, "") != 0) {
     sprintf(hi, "%s", ip);
     tft->drawString(hi, b.xStart + XFOOT + 15 + 12 + 10 + 6 * 8 + 13 * 6, b.yStart + YFOOT, 1); // Print the line
@@ -1605,7 +1605,7 @@ void footerRDX::showtime() {
 
   tft->setTextFont(2);
   tft->setTextSize(1);
-  tft->setTextColor(TFT_RED, TFT_WHITE);
+  tft->setTextColor(TFT_BLACK, TFT_WHITE);
   uint16_t fh = tft->fontHeight();
 
   int tzhour=timeinfo.tm_hour;
@@ -1654,7 +1654,7 @@ displayRDX d = displayRDX(&tft, 2, 50, 272, 99, 10, TFT_CYAN, TFT_BLUE, TFT_BLAC
 progressBar p = progressBar(&tft, 2, 44, 272, 4, 10, TFT_CYAN, TFT_BLUE, TFT_BLACK);
 textRDX text = textRDX(&tft, 2 + 272 + 2, 50, 204, 99, 10, TFT_WHITE, TFT_BLACK, TFT_WHITE);
 spectrumRDX s = spectrumRDX(&tft, 2, 50 + 100 + 2, 480, 150, 10, TFT_BLUE, TFT_CYAN, TFT_WHITE); //previously 160-155
-footerRDX foot = footerRDX(&tft, 2, 50 + 100 + 2 + 150, 480, 18, 10, TFT_WHITE, TFT_RED, TFT_WHITE); //previously 160-155
+footerRDX foot = footerRDX(&tft, 2, 50 + 100 + 2 + 150, 480, 18, 10, TFT_WHITE, TFT_BLACK, TFT_WHITE); //previously 160-155
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=[End of definitions]*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=**=*=*
 
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=**=*=*

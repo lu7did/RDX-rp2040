@@ -1,3 +1,5 @@
+
+
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
 //                                              RDX_rp2040                                                 *
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
@@ -433,15 +435,23 @@ void fftCallBack() {
 
     tft_run(pen);
 
+    #ifdef CAT
+    CAT_check();
+    #endif //CAT
+
 }
 /*---------------------------------------------------------------------------------------------
  * This is a callback handler which is called at the end of each decoding cycle
  */
 void endCallBack() {
+
    tft_endoftime();
    checkButton();
 
    tft_run(true);
+   #ifdef CAT
+   CAT_check();
+   #endif //CAT   
 }
 /*----------------------------------------------------------------------------------------------
  * This is the callback handler called while sending FT8 tones
@@ -927,11 +937,18 @@ void ft8_run() {
   while (!timeWait()) {
      tft_checktouch();
      checkButton();
+    #ifdef CAT
+     CAT_check();
+    #endif //CAT
   }
   if (send && isChoices(&sendChoices) && CurrentStation.qsowindow != getQSOwindow())
   {
 
     _INFOLIST("%s ------- TX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+    
+    #ifdef CAT
+    CAT_check();
+    #endif //CAT
     /*---------------------------------------------------------------*
      *  If in autosend mode pick automatically the response message  *
      *  if not pick it manually                                      *
@@ -1131,7 +1148,7 @@ set_sys_clock_khz(CPU_CLOCK,true);
 #ifdef DEBUG
   _SERIAL.begin(115200);
   while (!_SERIAL);
-  delay(200);
+  delay(50);
   _SERIAL.flush();
   sprintf(hi,"%s Raspberry Pico Digital Transceiver\nVersion(%s) Build(%s) (c)%s\n",PROGNAME,VERSION,BUILD,AUTHOR); 
   _SERIAL.print(hi);
@@ -1145,11 +1162,24 @@ set_sys_clock_khz(CPU_CLOCK,true);
 
 #endif //DEBUG
 
+
+#ifdef CAT
+  _CAT.setTX(UART_TX);
+  _CAT.setRX(UART_RX);
+  _CAT.begin(115200);
+  delay(50);
+  _CAT.flush();
+  cat_stat=0;
+#endif //CAT
 /*------------------------------------------------------
  * Configuration manifesto
  */
 #ifdef OVERCLOCK 
    _INFO("Overclock activated\n");
+#endif
+
+#ifdef CAT 
+   _INFO("CAT activated\n");
 #endif
 
 #ifdef MULTICORE 
@@ -1165,9 +1195,9 @@ _INFO("File System Browser activated\n");
 #endif
 
 #ifdef RX_SI473X
-_INFO("RX Si473x defined\n");
+_INFO("RX Si473x based receiver defined\n");
 #else
-_INFO("RX CD2003GP defined\n");
+_INFO("RX CD2003GP based receiver defined\n");
 #endif //RX_SI473X
 
 #ifdef IL9488 
@@ -1176,6 +1206,10 @@ _INFO("Support for TFT IL9488 activated\n");
 
 #ifdef CLITOOLS  
 _INFO("Command Line Interface (CLI) tools activated\n"); 
+#endif
+
+#ifdef CAT  
+_INFO("CAT control (TS2000 emulation) activated\n"); 
 #endif
 
 #ifdef WEBTOOLS  
@@ -1194,9 +1228,9 @@ _INFO("USB ADIF export activated\n");
 _INFO("Hardware Watchdog enabled\n");
 
 if (watchdog_caused_reboot()) {
-        _INFO("Rebooted by Watchdog!\n");
+    _INFO("Rebooted by Watchdog!\n");
 } else {
-        _INFO("Clean boot\n");
+    _INFO("Clean boot\n");
 }
 
 #endif //WATCHDOG
@@ -1236,6 +1270,26 @@ if (watchdog_caused_reboot()) {
   bool downKey=digitalRead(DOWN);
   bool txKey=digitalRead(TXSW);
   _INFOLIST("%s initial key configuration up(%s) down(%s) tx(%s)\n",__func__,BOOL2CHAR(upKey),BOOL2CHAR(downKey),BOOL2CHAR(txKey));
+
+  /*--------------
+    If Up & Down = LOW and txKey=HIGH then reset to 
+    default values (the ones defined in RDX-rp2040h) and
+    store in EEPROM.
+    */
+  if ( downKey == HIGH && upKey == HIGH && txKey == LOW ) {
+    _INFO("Reset transceiver to default configuration\n");
+    resetEEPROM();
+    int i=0;
+    while (digitalRead(TXSW)==LOW) {
+        digitalWrite(3+i,HIGH);
+        delay(500);
+        digitalWrite(3+i,LOW);
+        i=(i+1) % 5;
+        _INFO("blinking LED(%d)\n",i);
+    }
+    _INFO("Reset transceiver completed\n");
+  }
+
 
 #if defined(RP2040_W) && defined(FSBROWSER)
   /*--------
@@ -1363,6 +1417,10 @@ void loop()
   checkButton();
   tft_run(true);
 
+#ifdef CAT
+  CAT_check();
+#endif //CAT  
+
 
   /*------------------------------------------------
      Main FT8 handling cycle
@@ -1378,9 +1436,17 @@ void loop()
   #endif //TRACE_SI473X  
   #endif //RX_SI473X
   
+  #ifdef DOPING 
+  char pingHost[20];
+  strcpy(pingHost,"www.hotmail.com");
+  checkInet(pingHost);
+  #endif //DOPING
+  
   #ifdef WATCHDOG
   watchdog_update();
   #endif //WATCHDOG
+
+
 }
 //*********************[ END OF MAIN LOOP FUNCTION ]*************************
 //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
@@ -2064,7 +2130,6 @@ void INIT() {
 
   #ifdef RX_SI473X
   SI473x_setFrequency(Band_slot);
- 
   #endif //RX_SI473X
   
   _INFO("Band_slot(%d) freq(%ul)\n",Band_slot,freq);
@@ -2126,8 +2191,8 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_CAL, cal_factor);
     EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);
     
-    //EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
-    //EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
+    EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
+    EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
 
     EEPROM.get(EEPROM_ADDR_MAXTX,maxTx);
     EEPROM.get(EEPROM_ADDR_MAXTRY,maxTry);
@@ -2163,11 +2228,7 @@ void resetEEPROM() {
   
     cal_factor = 100000;
     Band_slot  = 1;
-
-    //strcpy(my_callsign,MY_CALLSIGN);
-    //strcpy(my_grid,MY_GRID);   
     strcpy(build,BUILD);
-
     strcpy(adiffile,ADIFFILE);
 
 #ifdef DATALOGGERUSB    

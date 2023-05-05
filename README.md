@@ -1,7 +1,7 @@
 # RDX rp2040 Digital Transceiver (RDX_rp2040)
 
 
-# Overview to Version 2.0 (Alpha)
+# Overview to Version 2.0 (Beta)
 
 A brief story of the project start with the excelent ADX Transceiver from Barb (WB2CBA) which can be found at
 
@@ -72,6 +72,9 @@ build 85
 * Watchdog added if the code stalls for more than 7 secs.
 * Reset to default values.
 
+build 87
+* Update CAT support (TS2000)
+* Minor enhancements
 ```
 
 # Hardware

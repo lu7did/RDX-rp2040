@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "85"
+#define BUILD   "87"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -75,6 +75,8 @@ typedef int16_t sigBin[960];
    Support for the Si473x chipset as a receiver
   -------------------------------------------------------------*/
 #define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
+
+
 /*----------------------
   The following definition is used to force a given I2C address if not found
   by querying the I2C bus
@@ -85,6 +87,7 @@ typedef int16_t sigBin[960];
 #define STACK_SIZE      11000   //Bytes
 #define DSP_QUEUEMAX    2       //DSP Queue High Watermark
 #define OVERCLOCK       1       //Overclock the processor up to x2
+//#define DOPING          1
 
 /*-------------------------------------------------------------*
    User defined configuration parameters
@@ -211,10 +214,17 @@ typedef int16_t sigBin[960];
 */
 #define CAL             9      //Automatic calibration entry
 
+/*----
+   Define UART0 (GPIO 12/pin 16)
+*/
+#define UART_TX        12
+#define UART_RX        13
+
+
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 //*                      Watchdog definitions.                                                  *
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-#define WATCHDOG        1
+//#define WATCHDOG        1
 #ifdef WATCHDOG
 #define WATCHDOG_TIMER  7000
 #endif //WATCHDOG
@@ -325,6 +335,7 @@ typedef int16_t sigBin[960];
  */
 extern Si5351 si5351;
 
+extern int  cat_stat;
 extern char my_callsign[16];
 extern char my_grid[8];
 extern uint8_t nTry;
@@ -454,6 +465,7 @@ extern void toupperStr(char *s);
 extern bool isNumeric(char *s);
 
 extern int checkAP(char* s, char* p);
+extern int checkInet(char* h);
 extern void resetAP();
 extern int setup_wifi();
 extern bool getClock(char* n1, char* n2);
@@ -560,6 +572,10 @@ extern bool cli_commandProcessor(char *cmd,char *arg, char *response);
 extern void cli_init(char *out);
 bool cli_execute(char *buffer, char *outbuffer);
 
+extern uint16_t ft8_crc(const uint8_t message[], int num_bits);
+extern void CAT_check(void);
+
+
 /*-------------------------------------------------------
  * Debug and development aid tracing
  * only enabled if DEBUG is defined previously
@@ -571,6 +587,16 @@ bool cli_execute(char *buffer, char *outbuffer);
 #else
 #define _SERIAL Serial
 #endif //UART
+
+#ifdef CAT
+
+#ifdef UART
+#undef _SERIAL
+#define Serial
+#endif //UART
+
+#define _CAT  Serial1
+#endif //CAT
 
 #define _INFOLIST(...) \
   do { \
@@ -632,10 +658,7 @@ bool cli_execute(char *buffer, char *outbuffer);
 #define _println(...)
 #define _print(...)
 
+
+
 #endif
 
-/*----------------------------------------------------------
- * Extern functions across the different sub-systems
- */
-
-extern uint16_t ft8_crc(const uint8_t message[], int num_bits);

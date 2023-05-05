@@ -27,6 +27,7 @@
 #define ADIF                 1  //Comment out if an ADIF logging is not needed
 #define DATALOGGERUSB        1  //Enable log export as a single file thru USB when active
 #undef  UART                    //define for other than USB serial (Serial1 thru UART)
+#define CAT                  1
 
 /*----------------------------------------------------
  * ft8 definitions
@@ -67,7 +68,6 @@
 #define TCP_PORT               9000              //TCP Port to listen for connections
 #define HTTP_PORT                80              //Web Filesystem browser
 #define WEB_PORT               8000              //Web configuration tool
-
 /*-------------------------------------------------------------
  * This are the FT8 algorithm tune parameters
  * Lowering the parameters will make the FT8 decoding to be 
