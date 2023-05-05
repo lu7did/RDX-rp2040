@@ -9,7 +9,7 @@
  /*--------------------------------------------------
  * Program configuration parameters
  */
-#define DEBUG                1  //Uncomment to activate debugging traces (_INFOLIST(...) statements thru _SERIAL
+//#define DEBUG                1  //Uncomment to activate debugging traces (_INFOLIST(...) statements thru _SERIAL
 #define RP2040_W             1  //Comment if running on a standard Raspberry Pico (non Wireless)
 
 /*----------------------------------------------------
@@ -27,7 +27,7 @@
 #define ADIF                 1  //Comment out if an ADIF logging is not needed
 #define DATALOGGERUSB        1  //Enable log export as a single file thru USB when active
 #undef  UART                    //define for other than USB serial (Serial1 thru UART)
-#define CAT                  1
+//#define CAT                  1
 
 /*----------------------------------------------------
  * ft8 definitions

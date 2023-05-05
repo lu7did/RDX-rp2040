@@ -719,6 +719,14 @@ Reports of successful integration with NE602 or TA2003 chipset based receivers h
 The Pixino project, implementing a Pixie design with a Si5351 clock is a good foundation for a super-simple, yet capable, 
 transceiver design which can be controlled by the ADX-rp2040 firmware with small or no modifications.
 
+## CAT Support
+When enabled by the **#define CAT 1** clause the transceiver implements the TS2000 CAT protocol support, when enabled it has to
+be configured with the following parameters:
+
+*	Rig: Kenwood TS2000
+*	115200 8N2
+*	DTR/RTS High
+
 
 ## TFT LCD display support
 
@@ -785,7 +793,6 @@ This is the informal roadmap followed to prioritize and implement the future fea
 
 ## low priority roadmap
 
-* CAT support (TS2000 to be compatible with ADX).
 * Support for smaller display (partial)
 * WSPR beacon.
 * Support for QUAD multifilter board
@@ -802,6 +809,7 @@ This is the informal roadmap followed to prioritize and implement the future fea
 
 ## Done (as per V2.0 build 80 or higher)
 
+* CAT support (TS2000 to be compatible with ADX).
 * Develop or adopt a PCB layout design.
 * Support for Si4735 chipset based receiver
 * Support for smaller display (partial)
