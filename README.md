@@ -86,6 +86,7 @@ If anybody has questions or issues please:
 
 
 * Be sure you read the documentation first.
+* Check on the issues list of the GitHub site, the issue might have been described there or even a workaround might exists for it.
 * State it as an  English request. English isn’t even my fourth language, still I do my best to adhere to it.
 * For casual question you can use the groups.io uSDX forum and for a longer ones please open and issue at the GitHub portal of the project.
 * Express very clearly which version and level the firmware has. In most cases using the latest would solve the issue.
