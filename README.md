@@ -77,6 +77,29 @@ build 87
 * Minor enhancements
 ```
 
+# Support and issues
+
+This is an experimental, work-in-progress, non-profit, project performed as closest to the ham spirit as possible. Only spare, hobby,
+time is available to move the project forward or to provide support on usage or issues.
+
+If anybody has questions or issues please:
+
+
+* Be sure you read the documentation first.
+* State it as an  English request. English isn’t even my fourth language, still I do my best to adhere to it.
+* For casual question you can use the groups.io uSDX forum and for a longer ones please open and issue at the GitHub portal of the project.
+* Express very clearly which version and level the firmware has. In most cases using the latest would solve the issue.
+* Ensure the issue happens with a freshly downloaded last version of the firmware, don’t expect me to debug any modification you did.
+* Describe in your own words the problem and what you did to expose it and what workarounds you attempted.
+* Present a photo of the issue if it can be seen in the TFT display.
+* Add the content of the monitoring terminal session with DEBUG enabled to help me understand what is going on.
+* Attach any other documentation you think might help debugging the issue.
+
+
+Please report ONE (1) issue per entry, and proceed as clean as possible with the debug instructions given to you to further understand or to fix the problem.
+I’ll address your issue as soon as my available time allows, not necessarily in a FIFO way.
+
+
 # Hardware
 
 ## ADX-rp2040 board
