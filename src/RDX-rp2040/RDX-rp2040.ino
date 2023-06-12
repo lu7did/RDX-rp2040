@@ -1163,14 +1163,18 @@ set_sys_clock_khz(CPU_CLOCK,true);
 #endif //DEBUG
 
 
-#ifdef CAT
+#if defined(CAT) and defined(UART)
   _CAT.setTX(UART_TX);
   _CAT.setRX(UART_RX);
+#endif 
+
+#ifdef CAT
   _CAT.begin(115200);
   delay(50);
   _CAT.flush();
   cat_stat=0;
 #endif //CAT
+
 /*------------------------------------------------------
  * Configuration manifesto
  */

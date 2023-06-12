@@ -29,6 +29,9 @@
 #undef  UART                    //define for other than USB serial (Serial1 thru UART)
 //#define CAT                  1
 
+
+
+
 /*----------------------------------------------------
  * ft8 definitions
  * Station parameters

@@ -25,7 +25,7 @@
   CAT memory areas
 */
 
-#define CATCMD_SIZE          18
+#define CATCMD_SIZE          64
 
 int  cat_stat=0;
 int  CAT_mode=2;

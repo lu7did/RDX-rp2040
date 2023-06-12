@@ -101,6 +101,15 @@ typedef int16_t sigBin[960];
 */
 
 /*----------------------------------------------
+  If defined CAT and DEBUG then CAT rules
+ *----------------------------------------------*/
+
+#if defined(CAT)
+//#undef DEBUG
+#endif //CAT
+
+
+/*----------------------------------------------
   If defined MULTICORE then exclude FSBROWSER
   and CLITOOLS and WEBTOOLS
  *----------------------------------------------*/
@@ -148,6 +157,7 @@ typedef int16_t sigBin[960];
  *-----------------------------------------------*/
 
 #ifdef RX_SI473X           //Define RESET pin for SI473x if defined
+
 #define RESET_SI473X    1  //Si473x RESET pin
 #define AM_FUNCTION     1
 #define RESET_PIN       1
@@ -576,9 +586,21 @@ extern uint16_t ft8_crc(const uint8_t message[], int num_bits);
 extern void CAT_check(void);
 
 
+
+/*-------------------------------------------------------
+  CAT serial port definition 
+*/
+#ifdef CAT
+#ifdef UART
+#define _CAT Serial1
+#else
+#define _CAT Serial
+#endif //UART
+#endif //CAT
 /*-------------------------------------------------------
  * Debug and development aid tracing
  * only enabled if DEBUG is defined previously
+ * CAT & DEBUG should not be simultaneously true
  */
 #ifdef DEBUG
 
@@ -587,16 +609,6 @@ extern void CAT_check(void);
 #else
 #define _SERIAL Serial
 #endif //UART
-
-#ifdef CAT
-
-#ifdef UART
-#undef _SERIAL
-#define Serial
-#endif //UART
-
-#define _CAT  Serial1
-#endif //CAT
 
 #define _INFOLIST(...) \
   do { \

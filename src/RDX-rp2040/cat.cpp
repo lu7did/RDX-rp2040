@@ -77,23 +77,23 @@ bool CAT_process(char *c,char *r,char *cmd,char *arg){
   }
 
   if (strlen(cmd)<2) {
-    //_INFO("*** ERROR *** malformed command, ignored\n");
+    _INFO("malformed command, ignored\n");
     return false;
   }
 
   if (strcmp(cmd,"FA")==0) {  
       if (strcmp(arg,"") != 0) {
         unsigned long fx=strtol(arg, &q, 10);
-        freq=fx;        
-        si5351.set_freq(freq * 100ULL, SI5351_CLK0);
-        si5351.set_freq(freq * 100ULL, SI5351_CLK1);
+        freq=fx;
+        
         CATT1=millis();
         CATT2=millis();
         stopTX();
       }    
+      uint32_t fa=freq;
       String sent = "FA" // Return 11 digit frequency in Hz.  
-          + String("00000000000").substring(0,11-(String(freq).length()))   
-          + String(freq) + ";";     
+          + String("00000000000").substring(0,11-(String(fa).length()))   
+          + String(fa) + ";";     
       strcpy(r,sent.c_str());
       return true;
   }
@@ -106,7 +106,7 @@ bool CAT_process(char *c,char *r,char *cmd,char *arg){
 
   if (strcmp(cmd,"TX")==0)  {   
       strcpy(r,"TX0;");
-      startTX();    
+      startTX();
       return true;
   } 
 
@@ -127,29 +127,33 @@ bool CAT_process(char *c,char *r,char *cmd,char *arg){
   }
 
   if (strcmp(cmd,"IF")==0) {
+
       if (TX_State == 1) {  
           String sent = "IF" // Return 11 digit frequency in Hz.  
-                  + String("00000000000").substring(0,11-(String(freq).length()))   
-                  + String(freq) + "00000" + "+" + "0000" + "0" + "0" + "0" + "00" + "1" + String(CAT_mode) + "0" + "0" + "0" + "0" + "000" + ";"; 
+                  + String("00000000000").substring(0,11-(String((long int)freq).length()))   
+                  + String((long int)freq) + "0000" + "+" + "00000" + "0" + "0" + "0" + "00" + "12" + "0000000;"; 
           strcpy(r,sent.c_str());        
       } else {  
           String sent = "IF" // Return 11 digit frequency in Hz.  
-                  + String("00000000000").substring(0,11-(String(freq).length()))   
-                  + String(freq) + "00000" + "+" + "0000" + "0" + "0" + "0" + "00" + "0" + String(CAT_mode) + "0" + "0" + "0" + "0" + "000" + ";"; 
+                  + String("00000000000").substring(0,11-(String((long int)freq).length()))   
+                  + String((long int)freq) + "0000" + "+" + "00000" + "0" + "0" + "0" + "00" + "02" + "0000000;"; 
           strcpy(r,sent.c_str());
       } 
       return true;
   }
+
 
   if (strcmp(cmd,"MD")==0) {  
       strcpy(r,"MD2;");
       return true;
   }
   strcpy(r,"ID019;");   //dummy answer trying not to disrupt the CAT protocol flow
-  //_INFO("***ERROR*** Entry(%s) nor processed response(%s)\n",c,r);
+  _INFO("***ERROR*** Entry(%s) not processed response(%s)\n",c,r);
   return false;
 
 }
+
+
 
 /*-----------------------------------------------
   CAT_check
