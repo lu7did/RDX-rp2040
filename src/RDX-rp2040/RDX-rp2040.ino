@@ -264,7 +264,7 @@ const unsigned long slot[MAXBAND][3] = { {3573000UL,3500000UL,3800000UL},       
                                          {21074000UL,21000000UL,21450000UL},      //15m [6]
                                          {24915000UL,24890000UL,24990000UL},      //12m [7]
                                          {28074000UL,28000000UL,29700000UL}};     //10m [8]
-int Band_slot = 3;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
+int Band_slot = 4;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
 int Band = 0;
 
 int Band1 = Bands[0]; // Band 1 // These are default bands. Feel free to swap with yours
@@ -1268,7 +1268,6 @@ if (watchdog_caused_reboot()) {
   */
   INIT();
   initSi5351();
-  tft_setup();
 
   bool upKey=digitalRead(UP);
   bool downKey=digitalRead(DOWN);
@@ -1294,6 +1293,8 @@ if (watchdog_caused_reboot()) {
     _INFO("Reset transceiver completed\n");
   }
 
+  tft_setup();
+  _INFO("TFT sub-system ready\n");
 
 #if defined(RP2040_W) && defined(FSBROWSER)
   /*--------
@@ -1307,12 +1308,16 @@ if (watchdog_caused_reboot()) {
 
 
   if ( upKey == LOW && downKey == HIGH && txKey == HIGH) {
-    _INFOLIST("%s Manual time-sync mode\n", __func__);
+    _INFO("Manual time-sync mode\n");
+    sprintf(hi,"Manual time-sync\n");   
+    tft_print(hi);
+    sprintf(hi,"Release at 00 secs\n");   
+    tft_print(hi);
     timeSync();
   }
 
 #if defined(ADIF)
-  _INFOLIST("%s initializing ADIF logbook sub-system Log(%s)\n",__func__,BOOL2CHAR(logADIF));
+  _INFO("Initializing ADIF logbook sub-system Log(%s)\n",BOOL2CHAR(logADIF));
   setup_adif();
 #endif 
 
@@ -1397,6 +1402,11 @@ _INFO("Watchdog enabled timeout %ld mSec\n",watchdog_timer);
 watchdog_enable(watchdog_timer, 1);
 #endif //WATCHDOG
 
+#ifdef DEBUG
+_INFO("EEPROM Listing\n");
+listEEPROM();
+_INFO("-----------------------------------\n");
+#endif //DEBUG
 _INFO("*** Transceiver ready ***\n");
 
 }
@@ -1801,8 +1811,8 @@ void updateEEPROM() {
     EEPROM.put(EEPROM_ADDR_SLOT, temp);
     
     EEPROM.put(EEPROM_ADDR_BUILD,build);
-    //EEPROM.put(EEPROM_ADDR_MYCALL,my_callsign);
-    //EEPROM.put(EEPROM_ADDR_MYGRID,my_grid);  
+    EEPROM.put(EEPROM_ADDR_MYCALL,my_callsign);
+    EEPROM.put(EEPROM_ADDR_MYGRID,my_grid);  
     EEPROM.put(EEPROM_ADDR_ADIF,adiffile);
     
 #ifdef DATALOGGERUSB
@@ -2195,8 +2205,6 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_CAL, cal_factor);
     EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);
     
-    EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
-    EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
 
     EEPROM.get(EEPROM_ADDR_MAXTX,maxTx);
     EEPROM.get(EEPROM_ADDR_MAXTRY,maxTry);
@@ -2211,7 +2219,10 @@ void readEEPROM() {
 #endif 
     
     EEPROM.get(EEPROM_ADDR_MSG,qso_message);
-    
+
+    EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
+    EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
+
 #ifdef RP2040_W    
     EEPROM.get(EEPROM_ADDR_SSID,wifi_ssid);
     EEPROM.get(EEPROM_ADDR_PSK,wifi_psk);
@@ -2248,7 +2259,9 @@ void resetEEPROM() {
     maxTry=MAXTRY;
     maxTx=MAXTX;
 
-    
+    strcpy(my_callsign,MY_CALLSIGN);
+    strcpy(my_grid,MY_GRID);
+
 #ifdef RP2040_W
 
     strcpy(wifi_ssid,WIFI_SSID);

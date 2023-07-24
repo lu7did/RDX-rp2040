@@ -75,6 +75,10 @@ build 85
 build 87
 * Update CAT support (TS2000)
 * Minor enhancements
+
+build 90
+* Fix EEPROM reset
+* minor enhancements
 ```
 
 # Support and issues
