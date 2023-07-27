@@ -83,6 +83,12 @@ build 90
 build 92
 * Fix fractional TZ bug (reset the EEPROM configuration if previously used with a previous version)
 * minor enhancements
+
+build 94
+* Reset EEPROM on build change.
+* if CAL_RESET_ON_BUILD calibration is also reset when EEPROM is reset
+* Fix a minor bug with TZ adjustment on minute 59+1 and hour 23+1
+* minor enhancements
 ```
 
 # Support and issues
@@ -245,6 +251,43 @@ The following UML graphic shows at high level the FT8 finite state machine contr
 transceiver during the FT8 QSO cycle.
 
 ![Alt Text](./docs/RDX-rp2040-FSM.png "FT8 protocol finite state machine")
+
+### Band support
+
+Band support depends on the hardware features present on the used board, in particular the low pass filter (LPF) design used, for most boards
+there will be a pluggable LPF module for each band, therefore the band change can not be made automatically on firmware alone, at least without 
+risking the finals.
+
+So, manual band selection needs to be exercised after a manual LPF plugin is made. There are boards such as the WBA2CBA's QUAD board that can be
+adapted but it's not presently supported by the firmware.
+
+The firmware itself supports the selection of up to 4 different bands, the definition is made at the firmware level on the structure
+
+```
+const uint16_t Bands[BANDS] = {40, 30, 20, 10};
+```
+
+Where the actual band is expressed on the nominal wave length of the band (in meters), in order to be used and for consistency purposes the band needs to
+be chosen among the ones defined in the following structure also in firmware:
+
+```
+const unsigned long slot[MAXBAND][3] = { {3573000UL,3500000UL,3800000UL},         //80m [0]
+                                         {5357000UL,5351000UL,5356000UL},         //60m [1]
+                                         {7074000UL,7000000UL,7300000UL},         //40m [2]
+                                         {10136000UL,10100000UL,10150000UL},      //30m [3]
+                                         {14074000UL,14000000UL,14350000UL},      //20m [4]
+                                         {18100000UL,18068000UL,18168000UL},      //17m [5]
+                                         {21074000UL,21000000UL,21450000UL},      //15m [6]
+                                         {24915000UL,24890000UL,24990000UL},      //12m [7]
+                                         {28074000UL,28000000UL,29700000UL}};     //10m [8]
+
+```
+The number of supported bands requires more extensive firmware changes to be made. 
+The default frequency, the one the firmware sets as the initial frequency when first boot up is defined by
+```
+int Band_slot = 1;  // This is he default starting band as the 1 based index into the Bands table i.e. 1=40m, 2=30m, 3=20m, 4=10m
+```
+
 
 ## Multicore operation
 

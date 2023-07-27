@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "92"
+#define BUILD   "94"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -278,6 +278,7 @@ typedef int16_t sigBin[960];
 #define EEPROM_ADDR_MODE    40       //MODE  int
 #define EEPROM_ADDR_SLOT    50       //SLOT  int
 #define EEPROM_ADDR_BUILD   60       //BUILD  int
+#define EEPROM_ADDR_BUILDN  65       //BUID
 #define EEPROM_ADDR_MYCALL  70       //MYCALL  char[16] -- 10
 #define EEPROM_ADDR_MYGRID  80       //GRID  char[8]    -- 10
 #define EEPROM_ADDR_SSID    90       //SSID  char[40]   -- 40

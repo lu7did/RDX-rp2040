@@ -70,12 +70,15 @@
 #define TIMEZONE              -03.00             //Buenos Aires, Argentina (GMT-3), change it accordingly using a fractional format VU-Land would be +5.50
 #endif //RP2040_W
 
+#define CAL_RESET_ON_BUILD    1
+
 #define ADIFFILE              "/rdx.txt"         //ADIF Logbook internal FS name
 #define LOGBOOK               "rdx_logbook.txt"  //ADIF Logbook USB exported name
 #define QSO_MESSAGE           "73 and GL"        //Courtesy message to be added as a comment on a QSO registered into the ADIF Logbook
 #define TCP_PORT               9000              //TCP Port to listen for connections
 #define HTTP_PORT                80              //Web Filesystem browser
 #define WEB_PORT               8000              //Web configuration tool
+
 /*-------------------------------------------------------------
  * This are the FT8 algorithm tune parameters
  * Lowering the parameters will make the FT8 decoding to be 

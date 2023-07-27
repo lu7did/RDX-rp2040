@@ -767,7 +767,7 @@ void displayRDX::onclickTriangle(int btnTriangle) {
   switch(btnTriangle) {
     case TRIANGLE_LEFT: {
                           Band_slot--;
-                          if (Band_slot<0) Band_slot=BANDS;
+                          if (Band_slot<1) Band_slot=BANDS;
                           btnPDX[BUTTON_BAND].v=Band_slot;
                           set(BUTTON_BAND,Band_slot-1);
                           break;
@@ -1753,7 +1753,7 @@ void tft_begin() {
 
   d.set(BUTTON_AUTO,-1);
   d.set(BUTTON_TX,0);
-  d.set(BUTTON_BAND,Band_slot);
+  d.set(BUTTON_BAND,Band_slot-1);
   d.set(BUTTON_CQ,0);
   
   d.init();
@@ -1889,7 +1889,6 @@ void tft_checktouch() {
  */
 void tft_setup() {
 
-  //_INFOLIST("%s \n",__func__);
   // Use this calibration code in setup():
   tft.setTouch(calData);
   tft.init();

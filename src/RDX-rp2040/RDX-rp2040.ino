@@ -158,6 +158,7 @@ char programname[12];
 char version[6];
 char build[6];
 
+
 /*-----------------------
  * Wifi support
  */
@@ -269,7 +270,7 @@ const unsigned long slot[MAXBAND][3] = { {3573000UL,3500000UL,3800000UL},       
                                          {21074000UL,21000000UL,21450000UL},      //15m [6]
                                          {24915000UL,24890000UL,24990000UL},      //12m [7]
                                          {28074000UL,28000000UL,29700000UL}};     //10m [8]
-int Band_slot = 4;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
+int Band_slot = 1;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
 int Band = 0;
 
 int Band1 = Bands[0]; // Band 1 // These are default bands. Feel free to swap with yours
@@ -277,7 +278,8 @@ int Band2 = Bands[1]; // Band 2
 int Band3 = Bands[2]; // Band 3
 int Band4 = Bands[3]; // Band 4 //*RP2040* changed to 10m from 17m
 
-unsigned long freq = 7074000UL;
+//unsigned long freq = 7074000UL;
+unsigned long freq = 0;
 
 int32_t cal_factor;
 int TX_State = 0;
@@ -1158,7 +1160,7 @@ void getLocalTime() {
   }
 
   localMin=localMin+tzm;
-  if (localMin>60) {
+  if (localMin>=60) {
      localMin=localMin-60;
      localHour=localHour+1;
   }
@@ -1169,7 +1171,7 @@ void getLocalTime() {
   }
 
   localHour=localHour+tzh;
-  if (localHour>24) {
+  if (localHour>=24) {
      localHour=localHour-24;
   }
 
@@ -1299,6 +1301,8 @@ if (watchdog_caused_reboot()) {
   strcpy(programname,PROGNAME);
   strcpy(version,VERSION);
   strcpy(build,BUILD);
+  _INFO("Firmware build (%d)\n",atoi(build));
+  
   strcpy(ip," Disconnected ");
   strcpy(adiffile,(char*)ADIFFILE);
 
@@ -1866,6 +1870,8 @@ void updateEEPROM() {
     EEPROM.put(EEPROM_ADDR_SLOT, temp);
     
     EEPROM.put(EEPROM_ADDR_BUILD,build);
+    EEPROM.put(EEPROM_ADDR_BUILDN,atoi(build));
+
     EEPROM.put(EEPROM_ADDR_MYCALL,my_callsign);
     EEPROM.put(EEPROM_ADDR_MYGRID,my_grid);  
     EEPROM.put(EEPROM_ADDR_ADIF,adiffile);
@@ -2079,6 +2085,7 @@ unsigned long Slot2Freq(int s) {
   digitalWrite(FT4, LOW);
   digitalWrite(FT8, LOW);
   digitalWrite(8-Band_slot,HIGH);
+  _INFO("Slot=%d band=%d index=%d freq=%ul\n",s,b,i,slot[i][0]);
 
   return slot[i][0];
 
@@ -2257,10 +2264,9 @@ void listEEPROM() {
  * EEPROM
  */
 void readEEPROM() {
-  
+
     EEPROM.get(EEPROM_ADDR_CAL, cal_factor);
-    EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);
-    
+    EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);   
 
     EEPROM.get(EEPROM_ADDR_MAXTX,maxTx);
     EEPROM.get(EEPROM_ADDR_MAXTRY,maxTry);
@@ -2299,7 +2305,10 @@ void readEEPROM() {
  */
 void resetEEPROM() {
   
+#ifdef CAL_RESET_ON_BUILD  
     cal_factor = 100000;
+#endif //CAL_RESET_ON_BUILD 
+
     Band_slot  = 1;
     strcpy(build,BUILD);
     strcpy(adiffile,ADIFFILE);
@@ -2309,8 +2318,7 @@ void resetEEPROM() {
 #endif //DATALOGGERUSB
     
     strcpy(qso_message,QSO_MESSAGE);
-    
-    
+        
     autosend=false;
     logADIF=true;
     timezone=TIMEZONE;
