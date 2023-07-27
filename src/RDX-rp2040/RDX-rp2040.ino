@@ -181,7 +181,12 @@ struct tm timeprev;        //epoch time
 time_t t_ofs = 0;          //time correction after sync (0 if not sync-ed)
 time_t now;
 char timestr[12];
-int  timezone=TIMEZONE;
+float timezone=TIMEZONE;
+int   tzh=0;
+int   tzm=0;
+int   localHour=0;
+int   localMin=0;
+//int  timezone=TIMEZONE;
 
 /*-----------------------
  * FT8 decoding
@@ -1127,6 +1132,53 @@ void core1_entry() {
 
 }
 #endif //MULTICORE
+/*---------------------------------------------------
+  Recover time zone information as hours and minutes of difference
+*/
+void getTZ() {
+  int h=int(timezone);
+  float t=(timezone-(h*1.0))*60;
+  int m=int(t);
+
+  tzh=h;
+  tzm=m;
+  _INFO("timezone=%5.2f tzh=%d tzm=%d\n",timezone,tzh,tzm);
+}
+/*----------------------------------------------------
+  Conver Z Hour to local hour
+*/
+void getLocalTime() {
+
+  localHour=timeinfo.tm_hour;
+  localMin=timeinfo.tm_min;
+
+  if (tzh==0 && tzm==0) {
+     _INFO("TZ not set, using UTC time\n");
+     return;
+  }
+
+  localMin=localMin+tzm;
+  if (localMin>60) {
+     localMin=localMin-60;
+     localHour=localHour+1;
+  }
+
+  if (localMin<0) {
+     localMin=localMin+60;
+     localHour=localHour-1;
+  }
+
+  localHour=localHour+tzh;
+  if (localHour>24) {
+     localHour=localHour-24;
+  }
+
+  if (localHour<0) {
+     localHour=localHour+24;
+  }
+
+
+}
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
 //*                             setup() (core0)                                              *
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
@@ -1260,8 +1312,9 @@ if (watchdog_caused_reboot()) {
   web_port=WEB_PORT;
   http_port=HTTP_PORT;
   tcp_port=TCP_PORT;
+
   timezone=TIMEZONE;
-  
+  getTZ();
   
   /*-----------
      System initialization
@@ -1290,7 +1343,6 @@ if (watchdog_caused_reboot()) {
         i=(i+1) % 5;
         _INFO("blinking LED(%d)\n",i);
     }
-    _INFO("Reset transceiver completed\n");
   }
 
   tft_setup();
@@ -1403,13 +1455,16 @@ watchdog_enable(watchdog_timer, 1);
 #endif //WATCHDOG
 
 #ifdef DEBUG
-_INFO("EEPROM Listing\n");
 listEEPROM();
 _INFO("-----------------------------------\n");
 #endif //DEBUG
+
+getLocalTime();
+_INFO("Z=%02d:%02d TZ=%02d:%02d Local=%02d:%02d\n",timeinfo.tm_hour,timeinfo.tm_min,tzh,abs(tzm),localHour,localMin);
 _INFO("*** Transceiver ready ***\n");
 
 }
+
 //**************************[ END OF SETUP FUNCTION ]************************
 
 //***************************[ Main LOOP Function ]**************************
@@ -1822,7 +1877,8 @@ void updateEEPROM() {
     EEPROM.put(EEPROM_ADDR_MSG,qso_message);
     EEPROM.put(EEPROM_ADDR_AUTO,autosend);
     EEPROM.put(EEPROM_ADDR_WRITE,logADIF);
-    EEPROM.put(EEPROM_ADDR_TZ,timezone);
+    EEPROM.put(EEPROM_ADDR_TZH,tzh);
+    EEPROM.put(EEPROM_ADDR_TZM,tzm);
     EEPROM.put(EEPROM_ADDR_MAXTRY,maxTry);
     EEPROM.put(EEPROM_ADDR_MAXTX,maxTx);
     
@@ -2210,7 +2266,9 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_MAXTRY,maxTry);
     EEPROM.get(EEPROM_ADDR_AUTO,autosend);
     EEPROM.get(EEPROM_ADDR_WRITE,logADIF);
-    EEPROM.get(EEPROM_ADDR_TZ,timezone);
+    EEPROM.get(EEPROM_ADDR_TZH,tzh);
+    EEPROM.get(EEPROM_ADDR_TZM,tzm);
+    timezone=(tzm*1.0)/100.0+tzh*1.0;
 
     EEPROM.get(EEPROM_ADDR_ADIF,adiffile);
     
@@ -2256,6 +2314,8 @@ void resetEEPROM() {
     autosend=false;
     logADIF=true;
     timezone=TIMEZONE;
+    getTZ();
+
     maxTry=MAXTRY;
     maxTx=MAXTX;
 

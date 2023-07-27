@@ -79,6 +79,10 @@ build 87
 build 90
 * Fix EEPROM reset
 * minor enhancements
+
+build 92
+* Fix fractional TZ bug (reset the EEPROM configuration if previously used with a previous version)
+* minor enhancements
 ```
 
 # Support and issues
@@ -470,10 +474,23 @@ Or including the same directive on a file called ap.h located in the same direct
 
 ### Time Zone
 
-Time zone can be set by modifying the **#define TIMEZONE x** statement which is the amount of hours to be added or substracted to the UTC time provided by the
-system clock. Without it the hour will be displayed as UTC.
+Time zone can be set by modifying the **#define TIMEZONE 0.00** statement which is the amount of hours/fractional minutes to be added or substracted to the UTC time 
+provided by the system clock. Without it the hour will be displayed as UTC. 
+
+```
+Time zone examples
+
+GMT				#define TIMEZONE  0.00
+GMT-3 (Argentina)		#define TIMEZONE -3.00
+GMT+1 (Western Europe)		#define TIMEZONE +1.00
+GMT+5h 30 (India)		#define TIMEZONE +5.50
+```
+
 
 The system clock once calibrated to be synchronized at the second 0/15/30 or 45 of the minute has no effect on the FT8 decoding.
+```
+Timezone won't be considered when operating with a standard Raspberry Pico (rp2040 not W).
+```
 
 
 ## ADIF Logbook 

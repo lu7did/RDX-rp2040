@@ -388,7 +388,8 @@ void cli_prompt(char *_out) {
      if (tzhour>23) tzhour=tzhour-24;
      if (tzhour<0)  tzhour=tzhour+24;
   }
-  sprintf(_out+strlen(_out), "[%02d:%02d:%02d] >", tzhour, timeinfo.tm_min, timeinfo.tm_sec);
+  getLocalTime();
+  sprintf(_out+strlen(_out), "[%02d:%02d:%02d] >", localHour,localMin, timeinfo.tm_sec);
 }
 /*----------------------------------------------
  * Define pointers to the specific variable

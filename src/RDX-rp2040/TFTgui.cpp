@@ -1607,15 +1607,8 @@ void footerRDX::showtime() {
   tft->setTextSize(1);
   tft->setTextColor(TFT_BLACK, TFT_WHITE);
   uint16_t fh = tft->fontHeight();
-
-  int tzhour=timeinfo.tm_hour;
-  if (timezone != 0) {
-     tzhour=tzhour+timezone;
-     if (tzhour>23) tzhour=tzhour-24;
-     if (tzhour<0)  tzhour=tzhour+24;
-  }
-
-  sprintf(hi, "%02d:%02d:%02d", tzhour, timeinfo.tm_min, timeinfo.tm_sec);
+  getLocalTime();
+  sprintf(hi, "%02d:%02d:%02d", localHour, localMin, timeinfo.tm_sec);
   tft->drawString(hi, b.xStart + XCLOCK, b.yStart + YCLOCK, 1); // Print the line
 
 }

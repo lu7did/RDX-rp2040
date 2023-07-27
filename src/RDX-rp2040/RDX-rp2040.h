@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "90"
+#define BUILD   "92"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -108,7 +108,9 @@ typedef int16_t sigBin[960];
 //#undef DEBUG
 #endif //CAT
 
-
+#ifndef TIMEZONE
+#define TIMEZONE 0.00
+#endif //!TIMEZONE
 /*----------------------------------------------
   If defined MULTICORE then exclude FSBROWSER
   and CLITOOLS and WEBTOOLS
@@ -288,7 +290,8 @@ typedef int16_t sigBin[960];
 #define EEPROM_ADDR_HOST   200       //HOST  char[16]   -- 10
 #define EEPROM_ADDR_WEB    220       //WEB   int        -- 2
 #define EEPROM_ADDR_PORT   230       //PORT  int        -- 2
-#define EEPROM_ADDR_TZ     240       //TZ    int        -- 2
+#define EEPROM_ADDR_TZH    240       //TZ    int        -- 2
+#define EEPROM_ADDR_TZM    244       //
 #define EEPROM_ADDR_ADIF   250       //ADIF  char[16]   -- 20
 #define EEPROM_ADDR_LOG    270       //LOG   char[32]   -- 30
 #define EEPROM_ADDR_MSG    310       //QSO   char[16]   -- 20
@@ -393,7 +396,11 @@ extern char version[6];
 extern char build[6];
 extern char ip[16];
 extern uint8_t ft8_state;
-extern int timezone;
+extern float timezone;
+extern int   tzh;
+extern int   tzm;
+extern int   localHour;
+extern int   localMin;
 extern unsigned long rssi;
 
 
@@ -518,6 +525,9 @@ extern uint16_t queueR;           //Signal capture queue read pointer
 extern uint16_t queueW;           //Signal capture queue write pointer
 
 extern struct semaphore ipc;      //Semaphore to protect multithread access to the signal queue
+extern void getTZ();
+extern void getLocalTime();
+
 
 
 
