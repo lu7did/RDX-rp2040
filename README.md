@@ -135,6 +135,15 @@ Based on the board designed by Charudatt (VU2UPX).
 *	TFT LCD IL9488 480x320 board (see wiring). 
 *	Enhanced layout
 
+```
+This board is under development and ad-hoc fixes and modifications are needed, see the issues at the github site
+for relevant entries with the "hardware" label referring to it.
+
+*	Issue #22  https://github.com/lu7did/RDX-rp2040/issues/28#issue-1820436298
+
+```
+
+
 # Firmware
 
 ## Configuration at boot up
