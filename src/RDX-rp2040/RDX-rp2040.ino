@@ -1411,7 +1411,8 @@ if (watchdog_caused_reboot()) {
   /*--------------------
      Place the receiver in reception mode
   */
-  digitalWrite(RX, LOW);  
+  digitalWrite(RX, LOW);
+  
   tft_updateBand();
   delay(Bdly);
 
@@ -1465,6 +1466,8 @@ _INFO("-----------------------------------\n");
 
 getLocalTime();
 _INFO("Z=%02d:%02d TZ=%02d:%02d Local=%02d:%02d\n",timeinfo.tm_hour,timeinfo.tm_min,tzh,abs(tzm),localHour,localMin);
+digitalWrite(RX,HIGH);  
+
 _INFO("*** Transceiver ready ***\n");
 
 }
@@ -1633,7 +1636,7 @@ void startTX() {
 
   unsigned long freq1 = freq;
   digitalWrite(RX, LOW);
-  si5351.set_clock_pwr(SI5351_CLK0, 1); // Turn on receiver clock
+  si5351.set_clock_pwr(SI5351_CLK0, 1); // Turn on transmitter clock
   si5351.set_clock_pwr(SI5351_CLK1, 0); // Turn on receiver clock
   si5351.set_clock_pwr(SI5351_CLK2, 0); // Turn on receiver clock
 
@@ -1654,6 +1657,8 @@ void startTX() {
 void stopTX() {
 
   digitalWrite(TX, 0);
+  digitalWrite(RX, HIGH);
+
   si5351.set_freq(freq * 100ULL, SI5351_CLK0);
 
   si5351.set_clock_pwr(SI5351_CLK0, 0); // Turn on receiver clock
