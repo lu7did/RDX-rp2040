@@ -1758,7 +1758,7 @@ void Band2Str(char *str) {
 
 void Band_Select() {
 
-  digitalWrite(TX, 1);
+  digitalWrite(TX, HIGH);
   addr = 50;
   EEPROM.get(addr, Band_slot);
 
@@ -1822,7 +1822,7 @@ while (true) {
     TX_State = digitalRead(TXSW);
     if (TX_State == LOW) {
 
-      digitalWrite(TX, 0);
+      digitalWrite(TX, LOW);
       break;
       //goto Band_exit;
 

@@ -33,26 +33,13 @@ void send_ft8(uint8_t tones[], uint32_t RF_freq, uint16_t AF_freq){
     si5351.set_freq(rf+af, SI5351_CLK0);
     si5351.set_clock_pwr(SI5351_CLK0, 1); // Turn on receiver clock
     si5351.output_enable(SI5351_CLK0, 1);   //TX on  
-    digitalWrite(TX, 1);
+    digitalWrite(TX, HIGH);
 
-    /*
-    digitalWrite(RX, LOW);
-    si5351.output_enable(SI5351_CLK1, 0);   //RX off
-    si5351.set_clock_pwr(SI5351_CLK1, 0); // Turn on receiver clock
-
-    si5351.set_clock_pwr(SI5351_CLK0, 1); // Turn on receiver clock
-    
-    digitalWrite(TX, 1);
-    si5351.output_enable(SI5351_CLK0, 1);   //TX on  
-    
-    //_INFOLIST("%s TX+ RF=%lu AF=%d rf=%lu af=%lu\n",__func__,RF_freq,AF_freq,rf,af);
-    */
     uint32_t tbar=time_us_32();
     for (uint8_t i = 0; i < 79; i++){
            
         uint32_t tstop = time_us_32() + 159000;
         uint32_t ftones=(uint32_t)tones[i]*625;
-        //_INFOLIST("%s RF=%lu AF=%lu ftones=%lu f=%lu\n",__func__,rf,af,ftones,rf+af+ftones);
         si5351.set_freq(rf+af+ftones, SI5351_CLK0);
         while (time_us_32() < tstop) {
           
@@ -61,9 +48,6 @@ void send_ft8(uint8_t tones[], uint32_t RF_freq, uint16_t AF_freq){
                 ManualTX();
                 return;
             }
-            /*  TX doesn't work correctly with this callback.
-            if (txIdle != NULL) txIdle();
-            */
             
             if (time_us_32()-tbar > 1000000) {
                tbar=time_us_32();
@@ -74,7 +58,7 @@ void send_ft8(uint8_t tones[], uint32_t RF_freq, uint16_t AF_freq){
         }
     }
 
-    digitalWrite(TX, 0);
+    digitalWrite(TX, LOW);
     si5351.output_enable(SI5351_CLK0, 0);   //RX off
     si5351.set_clock_pwr(SI5351_CLK0, 0); // Turn on receiver clock
     digitalWrite(RX, HIGH);
@@ -84,17 +68,5 @@ void send_ft8(uint8_t tones[], uint32_t RF_freq, uint16_t AF_freq){
     si5351.output_enable(SI5351_CLK1, 1);   //RX on
 
     stopTX();
-    tft_set(BUTTON_TX,0);
-    /*
-    digitalWrite(TX, 0);
-    si5351.output_enable(SI5351_CLK0, 0);   //RX off
-    si5351.set_clock_pwr(SI5351_CLK0, 0); // Turn on receiver clock
-
-    digitalWrite(RX, HIGH);
-    
-    si5351.set_freq(rf, SI5351_CLK1);
-    si5351.set_clock_pwr(SI5351_CLK1, 1); // Turn on receiver clock
-    si5351.output_enable(SI5351_CLK1, 1);   //RX on
-    //_INFOLIST("%s TX-\n",__func__);
-    */
+    tft_set(BUTTON_TX,LOW);
 }
