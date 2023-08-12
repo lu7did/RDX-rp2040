@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "95"
+#define BUILD   "98"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -161,6 +161,7 @@ typedef int16_t sigBin[960];
 #ifdef RX_SI473X           //Define RESET pin for SI473x if defined
 
 #define RESET_SI473X    1  //Si473x RESET pin
+#define INT_SI473X     15  //Interrupt PIN
 #define AM_FUNCTION     1
 #define RESET_PIN       1
 #define LSB             1
@@ -192,6 +193,8 @@ typedef int16_t sigBin[960];
 #define UP             10  //UP Switch
 #define DOWN           11  //DOWN Switch
 #define TXSW            8  //RX-TX Switch
+
+
 
 
 /*---
@@ -391,6 +394,7 @@ extern char hi[128];
 extern unsigned long freq;
 extern char timestr[12];
 extern int magint[960];
+extern int magmax;
 extern int TX_State;
 extern char programname[12];
 extern char version[6];
@@ -514,7 +518,11 @@ extern void SI473x_Setup();
 extern void SI473x_Status(); 
 extern void SI473x_setFrequency(int s);
 extern int getRSSI();
-
+extern String getFrequency();
+extern int getSNR();
+extern int getVolume();
+extern int getSignal();
+extern void setVolume();
 #endif //RX_SI473X
 
 #ifdef MULTICORE

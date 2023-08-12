@@ -89,6 +89,12 @@ build 94
 * if CAL_RESET_ON_BUILD calibration is also reset when EEPROM is reset
 * Fix a minor bug with TZ adjustment on minute 59+1 and hour 23+1
 * minor enhancements
+
+build 98
+* Fixed Si473x startup problem
+* Turn-off Si5351 (CLK1) when using the Si473x
+* minor enhancements
+
 ```
 
 # Support and issues
@@ -868,7 +874,7 @@ This board is under development and manual fixes are needed for it to work prope
 see the issues at the GitHub site looking for entries with the label *hardware* attached.
 
 * Issue # 22   (https://github.com/lu7did/RDX-rp2040/issues/28#issue-1820436298)
-
+* Issue # 31   (https://github.com/lu7did/RDX-rp2040/issues/31#issuecomment-1676112454)
 ```
 
 

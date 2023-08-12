@@ -220,7 +220,7 @@ void setup()
    */
   rx.setup(RESET_PIN, FM_FUNCTION);
   // Starts defaul radio function and band (FM; from 84 to 108 MHz; 103.9 MHz; step 100kHz)
-  rx.setFM(8400, 10800, 10390, 10);
+  rx.setFM(8400, 10800, 10320, 10);
   delay(500);
   currentFrequency = previousFrequency = rx.getFrequency();
   rx.setVolume(45);

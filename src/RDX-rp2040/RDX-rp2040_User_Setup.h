@@ -65,10 +65,7 @@
 #define NTP_SERVER1           "132.163.97.1"     //time.nist.gov in case of a faulty DNS server
 #define NTP_SERVER2           "pool.ntp.org"     //NTP server secondary      
 #define INET_SERVER           "www.google.com"   //Check some relevant host or IP address of interest to check connectivity
-
-#ifdef RP2040_W
 #define TIMEZONE              -03.00             //Buenos Aires, Argentina (GMT-3), change it accordingly using a fractional format VU-Land would be +5.50
-#endif //RP2040_W
 
 #define CAL_RESET_ON_BUILD    1
 

@@ -61,6 +61,7 @@ int8_t call_self_rx_snr;
 char call_station_callsign[8];
 char call_grid_square[4];
 
+
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=**=*=*
 //*                          Structures to support primitive GUI constructs
 //*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=**=*=*
@@ -1483,8 +1484,13 @@ void spectrumRDX::write(char *msg) {
 */
 void spectrumRDX::draw(int m[]) {
   if (!enabled) return;
-  for (int i = 0; i < BINS; i++) {
-    int v = m[i];
+
+  int j=0;
+  int i=0;
+  while (i<(960)) {
+//  for (int i = 0; i < BINS-2; i++) {
+    int v = (m[i]+m[i+1])/2;
+
     if (v < vmin) vmin = v;
     if (v > vmax) vmax = v;
     int x = 100 * (v - vmin);
@@ -1493,18 +1499,34 @@ void spectrumRDX::draw(int m[]) {
     } else {
       x = 0;
     }
+    
+#ifdef RX_SI473X
+    uint16_t c = TFT_BLUE;
+    if (v >= 100 && v < 130) c = TFT_CYAN;
+    if (v >= 130 && v < 160) c = TFT_YELLOW;
+    if (v >= 160 && v < 180) c = TFT_ORANGE;
+    if (v > 180) c = TFT_RED;
+    if (v >= 100 ) {
+      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, c);
+    }
+    j++;
+    i=i+2;
 
-
+#else
     uint16_t c = TFT_BLUE;
     if (v < 40) c = TFT_CYAN;
-    if (x >= 40 && v < 60) c = TFT_YELLOW;
-    if (x >= 60 && x < 70) c = TFT_ORANGE;
-    if (x > 75) c = TFT_RED;
-    if (x >= 25 ) {
-      tft->drawPixel(b.xStart + i, b.yStart + time_idx + 0 + 25, c);
+    if (v >= 40 && v < 60) c = TFT_YELLOW;
+    if (v >= 60 && v < 70) c = TFT_ORANGE;
+    if (v > 75) c = TFT_RED;
+    if (v >= 25 ) {
+      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, c);
     }
-    if ((i == 0 || i == 100 || i == 200 || i == 300 || i == 400)) {
-      tft->drawPixel(b.xStart + i, b.yStart + time_idx + 0 + 25, TFT_CYAN);
+    j++;
+    i=i+2;
+#endif 
+
+    if ((j == 0 || j == 100 || j == 200 || j == 300 || j == 400)) {
+      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, TFT_CYAN);
     }
   }
   time_idx++;
@@ -1914,10 +1936,14 @@ void tft_setup() {
 void tft_updatewaterfall(int mag[]) {
   
   if (time_us_32() - t1 >= 1000000) {
+
     t1 = time_us_32();
     s.draw(mag);
-    int magmax = 0;
 
+#ifdef RX_SI473X
+    int sunit=getRSSI();
+#else
+    int magmax = 0;
     for (int i = 0; i < 960; i++) {
       if (mag[i] == 0) {
         continue;
@@ -1926,10 +1952,7 @@ void tft_updatewaterfall(int mag[]) {
         magmax = mag[i];
       }
     }
-#ifdef RX_SI473X
-    long int s_signal = ((getRSSI()*1294+3651)/1000);
-    int sunit=int(s_signal+1);
-#else
+
     int sunit = (int)((0.125 * magmax) - 18.25);
 #endif //RX_SI4735
 
@@ -1938,8 +1961,6 @@ void tft_updatewaterfall(int mag[]) {
 
     p.progress++;
     p.show(TFT_GREEN);
-
-    //m.show(SUNIT,v);
   }
 }
 /*-------------------------------------------------------------------------
@@ -2060,7 +2081,9 @@ void tft_updateBand() {
        s.reset();
        s.init();
        text.reset();
-   }    
+   }
+
+   _INFO("Band_slot(%d)\n",Band_slot);
 }
 
 /*----------------------------------------------------------

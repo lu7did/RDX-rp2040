@@ -143,6 +143,7 @@ struct semaphore spc;
  */
 uint32_t codefreq = 0;
 uint32_t prevfreq = 0;
+uint32_t rssitout = 0;
 
 /*-----------------------
  * Station data
@@ -270,7 +271,8 @@ const unsigned long slot[MAXBAND][3] = { {3573000UL,3500000UL,3800000UL},       
                                          {21074000UL,21000000UL,21450000UL},      //15m [6]
                                          {24915000UL,24890000UL,24990000UL},      //12m [7]
                                          {28074000UL,28000000UL,29700000UL}};     //10m [8]
-int Band_slot = 1;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
+int Band_slot = 4;     // This is he default starting band 1=40m, 2=30m, 3=20m, 4=10m
+int Band_slot_bup= Band_slot;
 int Band = 0;
 
 int Band1 = Bands[0]; // Band 1 // These are default bands. Feel free to swap with yours
@@ -429,7 +431,7 @@ bool timeWait() {
 void fftCallBack() {
  
     tft_updatewaterfall(magint);
-    
+   
     #ifdef IL9488
     bool pen=true;
     #else
@@ -446,6 +448,12 @@ void fftCallBack() {
     CAT_check();
     #endif //CAT
 
+/*    
+    if (time_us_32()-rssitout > 10000) {
+       _INFO("S-Signal(%d)\n",getRSSI());
+       rssitout=time_us_32();
+    }
+*/
 }
 /*---------------------------------------------------------------------------------------------
  * This is a callback handler which is called at the end of each decoding cycle
@@ -951,8 +959,14 @@ void ft8_run() {
   if (send && isChoices(&sendChoices) && CurrentStation.qsowindow != getQSOwindow())
   {
 
-    _INFOLIST("%s ------- TX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
-    
+  #ifdef RX_SI473X
+  //_INFOLIST("%s -TX w[%d/%d]-[%s KHz]-(S=%d/SNR=%d)-\n", __func__,getQSOwindow(),heapLeft(),getFrequency().c_str(),getRSSI(),getSNR());
+  _INFOLIST("%s ------- TX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+
+  #else   //!SI473x
+  _INFOLIST("%s ------- TX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+  #endif // RX_SI473X
+
     #ifdef CAT
     CAT_check();
     #endif //CAT
@@ -1041,7 +1055,13 @@ void ft8_run() {
      *  Collect energy information for 12.8 secs and pre-process     *
      *  magnitudes found                                             *
      *---------------------------------------------------------------*/
-    _INFOLIST("%s ------- RX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+  #ifdef RX_SI473X
+  //_INFOLIST("%s -RX w[%d/%d]-[%s KHz]-(RSSI=%s/S=%d/SNR=%d)-\n", __func__,getQSOwindow(),heapLeft(),getFrequency().c_str(),getRSSI(),getSignal(),getSNR());
+   _INFOLIST("%s -------- RX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+
+  #else   //!SI473x
+  _INFOLIST("%s -------- RX w[%d/%d]----------\n", __func__,getQSOwindow(),heapLeft());
+  #endif //RX_SI473X
 
     inc_collect_power();
     /*---------------------------------------------------------------*
@@ -1155,7 +1175,6 @@ void getLocalTime() {
   localMin=timeinfo.tm_min;
 
   if (tzh==0 && tzm==0) {
-     _INFO("TZ not set, using UTC time\n");
      return;
   }
 
@@ -1291,7 +1310,10 @@ if (watchdog_caused_reboot()) {
     _INFO("Clean boot\n");
 }
 
+
 #endif //WATCHDOG
+
+  _INFO("Initial band_slot=%d\n",Band_slot);
 
   /*-----------
      Data area initialization
@@ -1450,7 +1472,7 @@ if (watchdog_caused_reboot()) {
   
 #ifdef RX_SI473X
   SI473x_Setup();
-  _INFO("Si4735 receiver initialized\n");
+  _INFO("Si4735 receiver initialized Band_slot(%d)\n",Band_slot);
 #endif //RX_SI473X
 
 #ifdef WATCHDOG
@@ -1503,14 +1525,6 @@ void loop()
   */
   ft8_run();
 
-  #ifdef RX_SI473X
-  #ifdef TRACE_SI473X
-  /*------------------------------------------------
-     If Si4735 enabled then show status
-  */
-  SI473x_Status();
-  #endif //TRACE_SI473X  
-  #endif //RX_SI473X
   
   #ifdef DOPING 
   char pingHost[20];
@@ -1539,7 +1553,9 @@ void initSi5351() {
   //------------------------------- SET SI5351 VFO -----------------------------------
   // The crystal load value needs to match in order to have an accurate calibration
   //----------------------------------------------------------------------------------
-  si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  int rc=si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  _INFO("initialization rc(%d)\n",rc);
+
   si5351.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
   si5351.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_8MA);// SET For Max Power
@@ -1554,8 +1570,13 @@ void initSi5351() {
 
   si5351.set_freq(freq * 100ULL, SI5351_CLK1);
 
+#ifndef RX_SI473X
   si5351.set_clock_pwr(SI5351_CLK1, 1); // Turn on receiver clock
   si5351.output_enable(SI5351_CLK1, 1);   // RX on
+#else
+  si5351.set_clock_pwr(SI5351_CLK1, 0); // Turn on receiver clock
+  si5351.output_enable(SI5351_CLK1, 0);   // RX on
+#endif //RX_SI473X
 
 }
 /*----------------------------------------------------
@@ -1666,7 +1687,13 @@ void stopTX() {
   si5351.set_clock_pwr(SI5351_CLK2, 0); // Turn on receiver clock
 
   si5351.output_enable(SI5351_CLK0, 0);   //TX off
+
+#ifndef RX_SI473X  
   si5351.output_enable(SI5351_CLK1, 1);   //TX off
+#else
+  si5351.output_enable(SI5351_CLK1, 0);   //TX off
+#endif //RX_SI473X
+
   si5351.output_enable(SI5351_CLK2, 0);   //TX off
 
   TX_State = 0;
@@ -2175,6 +2202,13 @@ void INIT() {
   gpio_pull_up(RESET_SI473X);
   digitalWrite(RESET_SI473X,HIGH);
 
+
+  //gpio_init(INT_SI473X);
+  //gpio_set_dir(INT_SI473X,GPIO_OUT);
+  //gpio_pull_up(INT_SI473X);
+  //digitalWrite(INT_SI473X,LOW);
+
+
 #endif //RX_SI473X
 
   /*---
@@ -2183,6 +2217,10 @@ void INIT() {
 
   Wire.setSDA(I2C_SDA);
   Wire.setSCL(I2C_SCL);
+
+  gpio_pull_up(I2C_SDA);
+  gpio_pull_up(I2C_SCL);
+  
   Wire.begin();
 
 
@@ -2270,6 +2308,8 @@ void listEEPROM() {
  */
 void readEEPROM() {
 
+    _INFO("Start Band_slot(%d)\n",Band_slot);
+
     EEPROM.get(EEPROM_ADDR_CAL, cal_factor);
     EEPROM.get(EEPROM_ADDR_SLOT, Band_slot);   
 
@@ -2301,7 +2341,7 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_WEB,web_port);  
 #endif //RP2040_W
     
-    _INFO(" completed\n");
+    _INFO(" completed Band_slot(%d)\n",Band_slot);
       
 }
 /*----------------------------------
@@ -2314,7 +2354,7 @@ void resetEEPROM() {
     cal_factor = 100000;
 #endif //CAL_RESET_ON_BUILD 
 
-    Band_slot  = 1;
+    Band_slot  = Band_slot_bup;
     strcpy(build,BUILD);
     strcpy(adiffile,ADIFFILE);
 

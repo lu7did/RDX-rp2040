@@ -1,3 +1,3 @@
-#define WIFI_SSID                  "Fibertel WiFi754 2.4GHz"
-#define WIFI_PSK                   "0041332244"
+#define WIFI_SSID                  "Fibertel WiFi996 2.4GHz"
+#define WIFI_PSK                   "00413322447"
 
