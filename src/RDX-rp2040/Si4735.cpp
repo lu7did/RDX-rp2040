@@ -261,7 +261,7 @@ int getRSSI() {
     return rx.getCurrentRSSI();
 }
 int getSignal() {
-    int aux = rx.getCurrentRSSI();
+    int rssi = rx.getCurrentRSSI();
     int rssiAux = 0;
     if (rssi < 2) rssiAux = 4;
     else 
