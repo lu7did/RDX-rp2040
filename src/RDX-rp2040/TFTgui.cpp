@@ -1484,12 +1484,58 @@ void spectrumRDX::write(char *msg) {
 */
 void spectrumRDX::draw(int m[]) {
   if (!enabled) return;
+  int k=0;
+  
+  int xmin=255;
+  int xmax=0;
+  int bmax=0;
+/*
+  sprintf(hi,"\nline[%03d] --",time_idx);
+  Serial.print(hi);
+*/
 
-  int j=0;
-  int i=0;
-  while (i<(960)) {
-//  for (int i = 0; i < BINS-2; i++) {
-    int v = (m[i]+m[i+1])/2;
+  for (int i = 0; i < BINS-1; i++) {  
+    int v = m[i];
+
+#ifdef RX_SI473X
+
+    uint16_t c = TFT_BLUE;
+    if (v >= 148 && v < 149) c = TFT_CYAN;
+    if (v >= 149 && v < 150) c = TFT_YELLOW;
+    if (v >= 150 && v < 151) c = TFT_ORANGE;
+    if (v > 151) c = TFT_RED;
+    if (v >= 148 ) {
+      tft->drawPixel(b.xStart + i, b.yStart + time_idx + 0 + 25, c);
+    }
+
+
+ /*----- Sniffer trace to calibrate volumes */
+ 
+ /*
+    if (v<xmin) xmin=v;
+    if (v>xmax) { xmax=v; bmax=i;}
+    sprintf(hi,"%03d ",v);
+    Serial.print(hi);
+*/
+/*
+    if (v!=0) { 
+       sprintf(hi,"%03d ",v);
+    } else {
+       sprintf(hi,"--- ");
+    }
+    Serial.print(hi);
+    k++;
+    if (k==10) {
+       k=0;
+       sprintf(hi,"--- min=%03d max=%03d\n",xmin,xmax);
+       Serial.print(hi);
+       xmin=255;
+       xmax=0;
+    }
+*/
+
+
+#else
 
     if (v < vmin) vmin = v;
     if (v > vmax) vmax = v;
@@ -1500,35 +1546,33 @@ void spectrumRDX::draw(int m[]) {
       x = 0;
     }
     
-#ifdef RX_SI473X
-    uint16_t c = TFT_BLUE;
-    if (v >= 100 && v < 130) c = TFT_CYAN;
-    if (v >= 130 && v < 160) c = TFT_YELLOW;
-    if (v >= 160 && v < 180) c = TFT_ORANGE;
-    if (v > 180) c = TFT_RED;
-    if (v >= 100 ) {
-      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, c);
-    }
-    j++;
-    i=i+2;
 
-#else
     uint16_t c = TFT_BLUE;
-    if (v < 40) c = TFT_CYAN;
-    if (v >= 40 && v < 60) c = TFT_YELLOW;
-    if (v >= 60 && v < 70) c = TFT_ORANGE;
-    if (v > 75) c = TFT_RED;
-    if (v >= 25 ) {
-      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, c);
+    if (x >= 80 && x < 85) c = TFT_CYAN;
+    if (x >= 85 && x < 90) c = TFT_YELLOW;
+    if (x >= 90 && x < 92) c = TFT_ORANGE;
+    if (x > 92) c = TFT_RED;
+    if (x >= 80 ) {
+      tft->drawPixel(b.xStart + i, b.yStart + time_idx + 0 + 25, c);
     }
-    j++;
-    i=i+2;
+ 
+  
 #endif 
 
-    if ((j == 0 || j == 100 || j == 200 || j == 300 || j == 400)) {
-      tft->drawPixel(b.xStart + j, b.yStart + time_idx + 0 + 25, TFT_CYAN);
+    if ((i == 0 || i == 100 || i == 200 || i == 300 || i == 400)) {
+      tft->drawPixel(b.xStart + i, b.yStart + time_idx + 0 + 25, TFT_CYAN);
     }
   }
+  
+  /*
+  sprintf(hi,"--- min=%03d max=%03d (%03d)\n",vmin,vmax,bmax);
+  Serial.print(hi);
+  
+  xmax=0;
+  xmin=255;
+  bmax=0;
+*/
+
   time_idx++;
   if (time_idx > LINES) {
     time_idx = 0;

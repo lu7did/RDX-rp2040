@@ -95,6 +95,10 @@ build 98
 * Turn-off Si5351 (CLK1) when using the Si473x
 * minor enhancements
 
+build 99
+* Partial fix of waterfall when using RDX-Si473X board
+* minor enhancements
+
 ```
 
 # Support and issues
