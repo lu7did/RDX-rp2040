@@ -1889,6 +1889,7 @@ void tft_checktouch() {
     prevpressed = false;
     return ;
   }
+  _INFO("Detected TFT touch x=%d y=%d\n",x,y);
   if (prevpressed == true) {
     if ((x >= xant - 3) &&
         (x <  xant + 3) &&
@@ -2336,3 +2337,74 @@ void tft_FSBrowser() {
   s.reset();
   text.reset();
 }
+#ifdef TFT_CALIBRATION
+/*-----------------------------------------------------------------------------------------------------------
+                                         EXPERIMENTAL CODE
+*/
+/*------------------------------------------
+  Perform screen calibration
+  Code excerpt from tft_SPI library by Bodmer
+  Code to run a screen calibration, not needed when calibration values set in setup()
+
+---*/                                         
+void touch_calibrate()
+{
+
+  
+  uint16_t calData[5];
+  uint8_t calDataOK = 0;
+
+  _INFO(" Starting screen calibration procedure\n");
+
+  // Calibrate
+  tft.fillScreen(TFT_BLACK);
+  tft.setCursor(20, 0);
+  tft.setTextFont(2);
+  tft.setTextSize(1);
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+
+  tft.println("Touch corners as indicated");
+
+  tft.setTextFont(1);
+  tft.println();
+
+  tft.calibrateTouch(calData, TFT_MAGENTA, TFT_BLACK, 15);
+
+  _INFO("Resulting calibration code is [%03d,%03d,%03d,%03d,%03d]\n",calData[0],calData[1],calData[2],calData[3],calData[4],calData[5]);
+  tft.fillScreen(TFT_BLACK);
+  
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+
+  sprintf(hi,"Calibration completed!\n");
+  tft_print(hi);   
+  
+  delay(4000);
+}
+/*-------------------------------------------------------------------------------------------------
+  TFT Callibration data
+  Code excerpt mostly from Touch_calibrate.ino
+---------------------------------------------------------------------------------------------------*/ 
+void tft_callibrate() {
+
+// Set the rotation to the orientation you wish to use in your project before calibration
+  // (the touch coordinates returned then correspond to that rotation only)
+  tft.setRotation(1);
+
+  // Calibrate the touch screen and retrieve the scaling factors
+  _INFO("Starting calibration\n");
+  touch_calibrate();
+
+/*
+  // Replace above line with the code sent to Serial Monitor
+  // once calibration is complete, e.g.:
+  uint16_t calData[5] = { 286, 3534, 283, 3600, 6 };
+  tft.setTouch(calData);
+*/
+
+  // Clear the screen
+  tft.fillScreen(TFT_BLACK);
+  //tft.drawCentreString("Touch screen to test!",tft.width()/2, tft.height()/2, 2);
+
+
+}
+#endif //TFT_CALIBRATE

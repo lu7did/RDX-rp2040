@@ -437,6 +437,7 @@ void fftCallBack() {
     #else
     bool pen=false;
     #endif //IL9488 
+    
 
     #ifdef WATCHDOG
     watchdog_update();
@@ -1301,6 +1302,10 @@ _INFO("ADIF loogbook support activated\n");
 _INFO("USB ADIF export activated\n"); 
 #endif
 
+#ifdef TFT_CALIBRATION
+_INFO("TFT Calibration procedure\n");
+#endif //TFT_CALIBRATION
+
 #ifdef WATCHDOG
 _INFO("Hardware Watchdog enabled\n");
 
@@ -1428,7 +1433,35 @@ if (watchdog_caused_reboot()) {
     while(true);
   }
 
+  if (calData[0] == 0) { //If first time take a minimum configuration
+     _INFO("TFT default calibration adopted\n");
+     calData[0] = 286;
+     calData[1] = 3534;
+     calData[2] = 283;
+     calData[3] = 3600;
+     calData[4] = 6;
+  }
 
+
+#ifdef TFT_CALIBRATION
+
+  if (downKey == HIGH && upKey == LOW && txKey == LOW) {
+    _INFO("TFT callibration procedure\n");
+    int i=0;
+    while (digitalRead(TXSW)==LOW) {
+        digitalWrite(3+i,HIGH);
+        delay(500);
+        digitalWrite(3+i,LOW);
+        i=(i+1) % 2;
+        _INFO("Waiting for key to be released (%d)\n",i);
+    }
+    _INFO("Key released, callibration procedure begin\n");
+
+    tft_callibrate();
+    updateEEPROM();
+
+  }
+#endif //TFT_CALIBRATION
 
   /*--------------------
      Place the receiver in reception mode
@@ -1928,6 +1961,14 @@ void updateEEPROM() {
     EEPROM.put(EEPROM_ADDR_WEB,web_port);
     EEPROM.put(EEPROM_ADDR_HTTP,http_port);
 #endif //RP2040_W 
+
+#ifdef TFT_CALIBRATION
+    EEPROM.put(EEPROM_ADDR_TFT+00,calData[0]);
+    EEPROM.put(EEPROM_ADDR_TFT+00,calData[1]);
+    EEPROM.put(EEPROM_ADDR_TFT+00,calData[2]);
+    EEPROM.put(EEPROM_ADDR_TFT+00,calData[3]);
+    EEPROM.put(EEPROM_ADDR_TFT+00,calData[4]);
+#endif //TFT_CALIBRATION
     
     EEPROM.commit();
     _INFO("EEPROM commit completed\n");
@@ -2340,6 +2381,26 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_HTTP,http_port);
     EEPROM.get(EEPROM_ADDR_WEB,web_port);  
 #endif //RP2040_W
+
+#ifdef TFT_CALIBRATE
+    
+    EEPROM.get(EEPROM_ADDR_TFT+00,calData[0]);
+    EEPROM.get(EEPROM_ADDR_TFT+00,calData[1]);
+    EEPROM.get(EEPROM_ADDR_TFT+00,calData[2]);
+    EEPROM.get(EEPROM_ADDR_TFT+00,calData[3]);
+    EEPROM.get(EEPROM_ADDR_TFT+00,calData[4]);
+    _INFO("TFT Calibration data recovered [%03d,%03d,%03d,%03d,%03d]",calData[0],calData[1],calData[2],calData[3],calData[4]);
+
+    if (calData[0] == 0 && calData[1] == 0) {
+       calData[0]=162;
+       calData[1]=3712;
+       calData[2]=292;
+       calData[3]=3458;
+       calData[4]=7;
+       _INFO("TFT Calibration data reset to default\n");
+    }
+
+#endif //TFT_CALIBRATE
     
     _INFO(" completed Band_slot(%d)\n",Band_slot);
       
@@ -2374,6 +2435,11 @@ void resetEEPROM() {
 
     strcpy(my_callsign,MY_CALLSIGN);
     strcpy(my_grid,MY_GRID);
+
+
+    #ifdef TFT_CALIBRATE
+
+    #endif //TFT_CALIBRATE
 
 #ifdef RP2040_W
 

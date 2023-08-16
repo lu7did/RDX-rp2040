@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "100"
+#define BUILD   "101"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -76,6 +76,10 @@ typedef int16_t sigBin[960];
   -------------------------------------------------------------*/
 //#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
 
+/*-------------------------------------------------------------*
+   Support for TFT calibration procedure
+  -------------------------------------------------------------*/
+//#define TFT_CALIBRATION  
 
 /*----------------------
   The following definition is used to force a given I2C address if not found
@@ -299,7 +303,8 @@ typedef int16_t sigBin[960];
 #define EEPROM_ADDR_ADIF   250       //ADIF  char[16]   -- 20
 #define EEPROM_ADDR_LOG    270       //LOG   char[32]   -- 30
 #define EEPROM_ADDR_MSG    310       //QSO   char[16]   -- 20
-#define EEPROM_ADDR_END    330
+#define EEPROM_ADDR_TFT    330       //TFT Calibration data [5]x2 330-332-334-336-338
+#define EEPROM_ADDR_END    340
 
 /*------------------------------------------------------------
  * GUI Icon enumeration
@@ -473,6 +478,8 @@ extern void tft_iconState(int _icon,bool _state);
 extern void tft_iconSet(int _icon,bool _enabled);
 extern void tft_iconActive(int _icon,bool _active);
 extern void tft_Web();
+extern void tft_callibrate();
+extern uint16_t calData[5];
 
 
 extern bool popBang(char *s,char *t,const char delimiter);

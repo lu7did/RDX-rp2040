@@ -99,6 +99,10 @@ build 99
 * Partial fix of waterfall when using RDX-Si473X board
 * minor enhancements
 
+build 101
+* Experimental feature to calibrate TFT
+* minor enhancements
+
 ```
 
 # Support and issues
@@ -852,6 +856,14 @@ only during the few fractions of a second remaining after the decoding of a cycl
 but still allow some manual functionality to be preserved, therefore it's a mitigation of an issue derived from not having the
 specified hardware.
 ```
+
+```
+* TFT Experimental feature *
+An experimental feature is available since build 101 to activate a TFT calibration process, this experimental feature is compiled
+by activating the *#define TFT_CALIBRATION 1* sentence. When activated pressing the UP and TX buttons simultaneously during the initial
+setup would activate a calibration procedure. This calibration will be stored in EEPROM for further usage.
+```
+
 
 ## RDX board from Charudatt (VU2UPX) - Si473x Chipset support
 
