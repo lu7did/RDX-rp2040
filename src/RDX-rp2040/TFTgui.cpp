@@ -273,11 +273,12 @@ linearMeter::linearMeter(TFT_eSPI* _tft, int _x, int _y, int _w, int _h, int _g,
 */
 void linearMeter::show(int _m , int _v)
 {
-  if (!enabled) return;
 
+  if (!enabled) return;
   if (_v < 0 || _v > n) {
     _v = n;
   }
+
   int val = _v;
   bool mchange = false;
   if (_m != mode) {
@@ -1811,6 +1812,8 @@ void tft_begin() {
 /*--------------------------------------------------------------------------------*/
 
   m.show(SUNIT, 0);
+  m.show(MET, 1);
+  m.show(SUNIT, 0);  
 
   d.addBtn(BUTTON_TX, &btnTX);
   d.addBtn(BUTTON_CQ, &btnCQ);
@@ -1972,6 +1975,7 @@ void tft_setup() {
  * Create all GUI objects
  */  
   tft_begin();
+  _INFO("Initialization completed\n");
 
 } // main
 

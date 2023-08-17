@@ -1236,7 +1236,6 @@ set_sys_clock_khz(CPU_CLOCK,true);
 
 #endif //DEBUG
 
-
 #if defined(CAT) and defined(UART)
   _CAT.setTX(UART_TX);
   _CAT.setRX(UART_RX);
@@ -1379,6 +1378,48 @@ if (watchdog_caused_reboot()) {
   tft_setup();
   _INFO("TFT sub-system ready\n");
 
+#ifndef TFT_CALIBRATION
+  _INFO("TFT default calibration adopted\n");
+  calData[0] = 286;
+  calData[1] = 3534;
+  calData[2] = 283;
+  calData[3] = 3600;
+  calData[4] = 6;
+#endif //TFT_CALIBRATION  
+
+
+#ifdef TFT_CALIBRATION
+
+  if ((calData[0] == 0 || calData[0] == 0xff)) { //If first time take a minimum configuration
+     _INFO("TFT initial calibration adopted\n");
+     calData[0] = 286;
+     calData[1] = 3534;
+     calData[2] = 283;
+     calData[3] = 3600;
+     calData[4] = 6;
+  }
+
+  if (downKey == HIGH && upKey == LOW && txKey == LOW) {
+    _INFO("TFT callibration procedure\n");
+    int i=0;
+    sprintf(hi,"Release to calibrate\n");   
+    tft_print(hi);
+    while (digitalRead(TXSW)==LOW) {
+        digitalWrite(3+i,HIGH);
+        delay(500);
+        digitalWrite(3+i,LOW);
+        i=(i+1) % 2;
+        _INFO("Waiting for key to be released (%d)\n",i);
+    }
+    _INFO("Key released, callibration procedure begin\n");
+
+    tft_callibrate();
+    updateEEPROM();
+    tft_setup();
+
+  }
+#endif //TFT_CALIBRATION
+
 #if defined(RP2040_W) && defined(FSBROWSER)
   /*--------
      If DOWN && UP is found pressed on startup then activates the FS browser
@@ -1433,41 +1474,11 @@ if (watchdog_caused_reboot()) {
     while(true);
   }
 
-  if (calData[0] == 0) { //If first time take a minimum configuration
-     _INFO("TFT default calibration adopted\n");
-     calData[0] = 286;
-     calData[1] = 3534;
-     calData[2] = 283;
-     calData[3] = 3600;
-     calData[4] = 6;
-  }
-
-
-#ifdef TFT_CALIBRATION
-
-  if (downKey == HIGH && upKey == LOW && txKey == LOW) {
-    _INFO("TFT callibration procedure\n");
-    int i=0;
-    while (digitalRead(TXSW)==LOW) {
-        digitalWrite(3+i,HIGH);
-        delay(500);
-        digitalWrite(3+i,LOW);
-        i=(i+1) % 2;
-        _INFO("Waiting for key to be released (%d)\n",i);
-    }
-    _INFO("Key released, callibration procedure begin\n");
-
-    tft_callibrate();
-    updateEEPROM();
-
-  }
-#endif //TFT_CALIBRATION
 
   /*--------------------
      Place the receiver in reception mode
   */
-  digitalWrite(RX, LOW);
-  
+  digitalWrite(RX, LOW); 
   tft_updateBand();
   delay(Bdly);
 
@@ -1478,7 +1489,6 @@ if (watchdog_caused_reboot()) {
 
   setup_ft8();
   delay(2*Bdly);
-
   tft_set(BUTTON_AUTO,autosend);
 
 #ifdef MULTICORE
@@ -2243,13 +2253,6 @@ void INIT() {
   gpio_pull_up(RESET_SI473X);
   digitalWrite(RESET_SI473X,HIGH);
 
-
-  //gpio_init(INT_SI473X);
-  //gpio_set_dir(INT_SI473X,GPIO_OUT);
-  //gpio_pull_up(INT_SI473X);
-  //digitalWrite(INT_SI473X,LOW);
-
-
 #endif //RX_SI473X
 
   /*---
@@ -2263,9 +2266,7 @@ void INIT() {
   gpio_pull_up(I2C_SCL);
   
   Wire.begin();
-
-
-  
+ 
   _INFO("I/O setup completed\n");
 
 
@@ -2369,7 +2370,6 @@ void readEEPROM() {
 #endif 
     
     EEPROM.get(EEPROM_ADDR_MSG,qso_message);
-
     EEPROM.get(EEPROM_ADDR_MYCALL,my_callsign);
     EEPROM.get(EEPROM_ADDR_MYGRID,my_grid);
 
@@ -2382,7 +2382,7 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_WEB,web_port);  
 #endif //RP2040_W
 
-#ifdef TFT_CALIBRATE
+#ifdef TFT_CALIBRATION
     
     EEPROM.get(EEPROM_ADDR_TFT+00,calData[0]);
     EEPROM.get(EEPROM_ADDR_TFT+00,calData[1]);
@@ -2391,16 +2391,16 @@ void readEEPROM() {
     EEPROM.get(EEPROM_ADDR_TFT+00,calData[4]);
     _INFO("TFT Calibration data recovered [%03d,%03d,%03d,%03d,%03d]",calData[0],calData[1],calData[2],calData[3],calData[4]);
 
-    if (calData[0] == 0 && calData[1] == 0) {
+    if ((calData[0] == 0 || calData[0] == 0xff) && (calData[1] == 0 || calData[1] == 0xff)) {
        calData[0]=162;
        calData[1]=3712;
        calData[2]=292;
        calData[3]=3458;
        calData[4]=7;
-       _INFO("TFT Calibration data reset to default\n");
+       _INFO("TFT Calibration data reset [%03d,%03d,%03d,%03d,%03d]",calData[0],calData[1],calData[2],calData[3],calData[4]);
     }
 
-#endif //TFT_CALIBRATE
+#endif //TFT_CALIBRATION
     
     _INFO(" completed Band_slot(%d)\n",Band_slot);
       
@@ -2437,9 +2437,9 @@ void resetEEPROM() {
     strcpy(my_grid,MY_GRID);
 
 
-    #ifdef TFT_CALIBRATE
+    #ifdef TFT_CALIBRATION
 
-    #endif //TFT_CALIBRATE
+    #endif //TFT_CALIBRATION
 
 #ifdef RP2040_W
 

@@ -44,7 +44,7 @@
 #define PROGNAME "RDX"
 #define AUTHOR "Pedro E. Colla (LU7DZ)"
 #define VERSION "2.0"
-#define BUILD   "101"
+#define BUILD   "102"
 /*-------------------------------------------------
  * Macro expansions and type definitions
  */
@@ -79,7 +79,7 @@ typedef int16_t sigBin[960];
 /*-------------------------------------------------------------*
    Support for TFT calibration procedure
   -------------------------------------------------------------*/
-//#define TFT_CALIBRATION  
+//#define TFT_CALIBRATION  1      //UNCOMMENT to enable TFT calibration capability          
 
 /*----------------------
   The following definition is used to force a given I2C address if not found
