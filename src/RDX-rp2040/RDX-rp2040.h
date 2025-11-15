@@ -74,7 +74,7 @@ typedef int16_t sigBin[960];
 /*-------------------------------------------------------------*
    Support for the Si473x chipset as a receiver
   -------------------------------------------------------------*/
-//#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
+#define RX_SI473X       1       //UNCOMMENT to use a receiver based on Si473x chipset
 
 /*-------------------------------------------------------------*
    Support for TFT calibration procedure

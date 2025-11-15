@@ -1345,7 +1345,18 @@ if (watchdog_caused_reboot()) {
 
   timezone=TIMEZONE;
   getTZ();
-  
+
+#ifndef TFT_CALIBRATION
+  _INFO("TFT default calibration adopted\n");
+  calData[0] = 286;
+  calData[1] = 3534;
+  calData[2] = 283;
+  calData[3] = 3600;
+  calData[4] = 6;
+  _INFO("TFT default calibration code is [%03d,%03d,%03d,%03d,%03d]\n",calData[0],calData[1],calData[2],calData[3],calData[4]);
+
+#endif //TFT_CALIBRATION  
+
   /*-----------
      System initialization
   */
@@ -1378,14 +1389,6 @@ if (watchdog_caused_reboot()) {
   tft_setup();
   _INFO("TFT sub-system ready\n");
 
-#ifndef TFT_CALIBRATION
-  _INFO("TFT default calibration adopted\n");
-  calData[0] = 286;
-  calData[1] = 3534;
-  calData[2] = 283;
-  calData[3] = 3600;
-  calData[4] = 6;
-#endif //TFT_CALIBRATION  
 
 
 #ifdef TFT_CALIBRATION
@@ -1974,10 +1977,10 @@ void updateEEPROM() {
 
 #ifdef TFT_CALIBRATION
     EEPROM.put(EEPROM_ADDR_TFT+00,calData[0]);
-    EEPROM.put(EEPROM_ADDR_TFT+00,calData[1]);
-    EEPROM.put(EEPROM_ADDR_TFT+00,calData[2]);
-    EEPROM.put(EEPROM_ADDR_TFT+00,calData[3]);
-    EEPROM.put(EEPROM_ADDR_TFT+00,calData[4]);
+    EEPROM.put(EEPROM_ADDR_TFT+02,calData[1]);
+    EEPROM.put(EEPROM_ADDR_TFT+04,calData[2]);
+    EEPROM.put(EEPROM_ADDR_TFT+06,calData[3]);
+    EEPROM.put(EEPROM_ADDR_TFT+08,calData[4]);
 #endif //TFT_CALIBRATION
     
     EEPROM.commit();
@@ -2385,10 +2388,10 @@ void readEEPROM() {
 #ifdef TFT_CALIBRATION
     
     EEPROM.get(EEPROM_ADDR_TFT+00,calData[0]);
-    EEPROM.get(EEPROM_ADDR_TFT+00,calData[1]);
-    EEPROM.get(EEPROM_ADDR_TFT+00,calData[2]);
-    EEPROM.get(EEPROM_ADDR_TFT+00,calData[3]);
-    EEPROM.get(EEPROM_ADDR_TFT+00,calData[4]);
+    EEPROM.get(EEPROM_ADDR_TFT+02,calData[1]);
+    EEPROM.get(EEPROM_ADDR_TFT+04,calData[2]);
+    EEPROM.get(EEPROM_ADDR_TFT+06,calData[3]);
+    EEPROM.get(EEPROM_ADDR_TFT+08,calData[4]);
     _INFO("TFT Calibration data recovered [%03d,%03d,%03d,%03d,%03d]",calData[0],calData[1],calData[2],calData[3],calData[4]);
 
     if ((calData[0] == 0 || calData[0] == 0xff) && (calData[1] == 0 || calData[1] == 0xff)) {

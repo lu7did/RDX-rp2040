@@ -1,3 +1,5 @@
+#include <BluetoothHIDMaster.h>
+
 #include <SI4735.h>
 
 #include <SI4735.h>

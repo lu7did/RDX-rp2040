@@ -9,8 +9,8 @@
  /*--------------------------------------------------
  * Program configuration parameters
  */
-//#define DEBUG                1  //Uncomment to activate debugging traces (_INFOLIST(...) statements thru _SERIAL
-//#define RP2040_W             1  //Comment if running on a standard Raspberry Pico (non Wireless)
+#define DEBUG                1  //Uncomment to activate debugging traces (_INFOLIST(...) statements thru _SERIAL
+#define RP2040_W             1  //Comment if running on a standard Raspberry Pico (non Wireless)
 
 /*----------------------------------------------------
   The following features can be activated only with 
